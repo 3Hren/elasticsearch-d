@@ -12,33 +12,11 @@ import vibe.data.json;
 
 import elasticsearch.connection.http;
 import elasticsearch.connection.pool;
-
-struct IndexRequest {
-	enum Method = HTTP.Method.put;
-
-	string index;
-	string type;
-	string id;
-
-	public string path() {
-		return "/" ~ to!string(joiner([index, type, id], "/"));
-	}
-}
-
-struct IndexResponse {
-	enum Method = IndexRequest.Method;
-
-	ElasticsearchResponse!Method response;
-	
-	struct Result {
-		@name("_index") string index;
-		@name("_type") string type;
-		@name("_id") string id;
-		ulong _version;
-		bool created;
-	}
-	Result result;
-}
+import elasticsearch.domain.response.base;
+import elasticsearch.domain.response.document.index;
+import elasticsearch.domain.request.base;
+import elasticsearch.domain.request.method;
+import elasticsearch.domain.request.document.index;
 
 struct ClientSettings {
 	string index;
@@ -62,7 +40,7 @@ class Transport {
 		pool.add(new HttpNodeClient(address));
 	}
 
-	public ElasticsearchResponse!Method perform(HTTP.Method Method)(ElasticsearchRequest!Method request) {
+	public ElasticsearchResponse!Method perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
 		if (pool.empty()) {
 			throw new Error("pool is empty");
 		}

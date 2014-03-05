@@ -1,6 +1,8 @@
 import std.stdio;
 
 import elasticsearch.client;
+import elasticsearch.domain.request.document.index;
+import elasticsearch.domain.response.document.index;
 
 struct Tweet {
 	string message;	
