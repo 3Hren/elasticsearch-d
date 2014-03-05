@@ -1,0 +1,19 @@
+{
+	"name": "elasticsearch-d",	
+	"description": "Elasticsearh client for D",
+	"homepage": "https://github.com/3Hren/elasticsearch-d",
+	"copyright": "Copyright © 2014, Evgeny Safronov",		
+	"authors": [
+		"Evgeny Safronov"
+	],
+	"versions": ["VibeCustomMain", "VibeNewSerialization"],
+	"targetType": "executable",
+	"sourcePaths": ["."],
+	"dependencies": {		
+		"vibe-d": {"version": "~master"}
+	},
+	"subPackages": [
+		"./elasticsearch/"
+	],
+	"libs": ["curl"]	
+}
