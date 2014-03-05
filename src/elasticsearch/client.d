@@ -3,7 +3,6 @@ module elasticsearch.client;
 import std.algorithm;
 import std.container;
 import std.conv;
-import std.net.curl : HTTP, CurlException, curlPut = put, curlHead = connect;
 import std.socket;
 import std.stdio;
 import std.range;
@@ -11,26 +10,8 @@ import std.range;
 import vibe.data.serialization;
 import vibe.data.json;
 
-struct ElasticsearchRequest(HTTP.Method Method) {
-	string path;
-
-	static if (Method == HTTP.Method.put || Method == HTTP.Method.post) {
-		string data;
-	}
-}
-
-struct ElasticsearchResponse(HTTP.Method Method) {
-	bool success;	
-	uint code;	
-	string address;
-
-	// string[] headers; Really need?
-	static if (Method == HTTP.Method.put || Method == HTTP.Method.post) {
-		string data;
-	}
-
-	ElasticsearchRequest!Method request;
-}
+import elasticsearch.connection.http;
+import elasticsearch.connection.pool;
 
 struct IndexRequest {
 	enum Method = HTTP.Method.put;
@@ -61,115 +42,6 @@ struct IndexResponse {
 
 struct ClientSettings {
 	string index;
-}
-
-abstract class NodeClient {
-	private string address;
-
-	public this(Address address) {
-		this.address = to!string(address);
-	}
-
-	public string getAddress() {
-		return address;
-	}
-
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.head) request);
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.get) request);
-	public abstract ElasticsearchResponse!(HTTP.Method.put) perform(ElasticsearchRequest!(HTTP.Method.put) request);	
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.post) request);	
-}
-
-class HttpNodeClient : NodeClient {
-	public this(Address address) {
-		super(address);
-	}
-
-	public override ElasticsearchResponse!(HTTP.Method.put) perform(ElasticsearchRequest!(HTTP.Method.put) request) {
-		string url = getUrl(request);
-		debug { writeln("Requesting ", url); }
-		char[] content = curlPut(url, request.data);
-		debug { writeln("Received data ", content); }
-		return ElasticsearchResponse!(HTTP.Method.put)(true, 200, address, to!string(content), request);
-	}	
-
-	private string getUrl(T)(T request) {
-		return address ~ request.path;
-	}
-}
-
-interface Balancer(R) if (isRandomAccessRange!R) {
-	alias Client = ElementType!R;
-
-	Client next(R range);
-}
-
-class RoundRobinBalancer(R) : Balancer!R {
-	private int current;
-
-	public override Client next(R range) {
-		if (current + 1 >= range.length) {
-			current = 0;
-		}
-
-		Client client = range[current++];
-		debug { writeln("Balancing at ", client.getAddress()); }
-		return client;
-	}	
-}
-
-struct ClientPool(Client) {
-	private alias Pool = Array!Client;
-	private alias PoolRange = Pool.Range;
-
-	private Pool pool;
-	private Balancer!PoolRange balancer = new RoundRobinBalancer!PoolRange();
-
-	public bool empty() {
-		return pool.empty();
-	}
-
-	public bool contains(Client client) {
-		foreach (Client c; pool) {
-			if (c.getAddress() == client.getAddress()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public void add(Client client) {
-		if (contains(client)) {
-			debug { writeln("Client ", client, " already exists in pool"); }
-			return;
-		}
-
-		pool.insert(client);
-	}
-
-	// TODO: void remove(Address address);
-	void remove(Client client) {
-		bool found = false;
-		ulong pos = 0;
-		for (ulong i = 0; i < pool.length; i++) {
-			Client c = pool[i];
-			if (c.getAddress() == client.getAddress()) {
-				found = true;
-				pos = i;
-				break;
-			}
-		}
-		if (!found) {
-
-		} else {
-			pool.linearRemove(pool[pos .. pos + 1]);
-		}
-	}
-
-	public Client next() {
-		return balancer.next(pool[]);
-	}	
 }
 
 class Transport {
