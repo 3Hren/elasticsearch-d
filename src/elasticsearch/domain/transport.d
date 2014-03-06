@@ -3,7 +3,7 @@ module elasticsearch.domain.transport;
 import std.algorithm;
 import std.conv;
 import std.regex;
-import std.socket : Address, AddressInfo, SocketType, ProtocolType, SocketException;
+import std.socket : Address, AddressInfo, SocketType, ProtocolType;
 
 import vibe.data.serialization;
 import vibe.data.json;
@@ -82,14 +82,14 @@ class Transport {
 			try {
 				Address address = parseAddress(node.httpAddress);
 				addNode(address);
-			} catch (SocketException err) {
+			} catch (std.socket.SocketException err) {
 				log!(Level.trace)("failed to parse %s: %s", node.httpAddress, err.msg);
 			}
 		}
 	}
 
 	private Address parseAddress(in string address) {
-		enum RX = ctRegex!(`^inet\[(?P<domain>.*)/(?P<ip>.+):(?P<port>\d+)\]$`); // inet[/95.108.174.57:9200]
+		enum RX = ctRegex!(`^inet\[(?P<domain>.*)/(?P<ip>.+):(?P<port>\d+)\]$`); // inet[/127.0.0.1:9200]
 
 		auto captures = matchFirst(address, RX);
 		string ip = captures["ip"];
