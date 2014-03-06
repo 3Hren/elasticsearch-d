@@ -33,9 +33,9 @@ class HttpNodeClient : NodeClient {
 
 	public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
 		string url = getUrl(request);
-		debug { writeln("Requesting ", url); }
+		debug writeln("Requesting ", url);
 		char[] content = curlPut(url, request.data);
-		debug { writeln("Received data ", content); }
+		debug writeln("Received data ", content);
 		return ElasticsearchResponse!(ElasticsearchMethod.put)(true, 200, address, to!string(content), request);
 	}	
 

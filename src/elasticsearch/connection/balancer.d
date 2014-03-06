@@ -18,7 +18,7 @@ class RoundRobinBalancer(R) : Balancer!R {
 		}
 
 		Client client = range[current++];
-		debug { writeln("Balancing at ", client.getAddress()); }
+		debug writeln("Balancing at ", client.getAddress());
 		return client;
 	}	
 }

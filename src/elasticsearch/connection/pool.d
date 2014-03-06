@@ -28,7 +28,7 @@ struct ClientPool(Client) {
 
 	public void add(Client client) {
 		if (contains(client)) {
-			debug { writeln("Client ", client, " already exists in pool"); }
+			debug writeln("Client ", client, " already exists in pool");
 			return;
 		}
 

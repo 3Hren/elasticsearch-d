@@ -36,7 +36,7 @@ class Transport {
 	}
 
 	public void addNode(Address address) {
-		debug { writeln("Adding node ", address); }
+		debug writeln("Adding node ", address);
 		pool.add(new HttpNodeClient(address));
 	}
 
@@ -49,7 +49,7 @@ class Transport {
 		try {
 			return client.perform(request);
 		} catch (CurlException error) {
-			debug { writeln("Request failed: ", error.msg); }
+			debug writeln("Request failed: ", error.msg);
 			pool.remove(client);
 			return perform(request);
 		}
