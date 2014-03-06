@@ -35,11 +35,9 @@ struct ClientPool(Client) {
 
 		log!(Level.trace)("client %s has been added to the pool", client);
 		pool.insert(client);
-	}
-
-	// TODO: void remove(Address address);
+	}	
 	
-	void remove(Client client) {
+	public void remove(Client client) {
 		bool found = false;
 		ulong pos = 0;
 		for (ulong i = 0; i < pool.length; i++) {
@@ -50,6 +48,7 @@ struct ClientPool(Client) {
 				break;
 			}
 		}
+		
 		if (!found) {
 			log!(Level.trace)("can not remove client %s: not found", client);
 		} else {

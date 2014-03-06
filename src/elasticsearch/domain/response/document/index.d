@@ -5,17 +5,14 @@ import elasticsearch.domain.request.document.index;
 
 import vibe.data.json;
 
-struct IndexResponse {
-	enum Method = IndexRequest.Method;
+struct IndexResult {
+	@name("_index") string index;
+	@name("_type") string type;
+	@name("_id") string id;
+	ulong _version;
+	bool created;
+}
 
-	ElasticsearchResponse!Method response;
-	
-	struct Result {
-		@name("_index") string index;
-		@name("_type") string type;
-		@name("_id") string id;
-		ulong _version;
-		bool created;
-	}
-	Result result;
+struct IndexResponse {
+	mixin Response!(IndexRequest, IndexResult);
 }

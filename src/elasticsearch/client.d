@@ -39,7 +39,7 @@ class Client {
 		immutable string data = serializeToJson(post).toString();		
 		ElasticsearchRequest!Method request = ElasticsearchRequest!Method(path, data);
 		ElasticsearchResponse!Method response = transport.perform(request);
-		IndexResponse.Result result = deserializeJson!(IndexResponse.Result)(response.data);		
+		IndexResponse.Result result = deserializeJson!(IndexResponse.Result)(response.data);
 		return IndexResponse(response, result);
 	}
 }

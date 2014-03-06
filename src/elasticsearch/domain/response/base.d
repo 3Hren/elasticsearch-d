@@ -9,9 +9,15 @@ struct ElasticsearchResponse(ElasticsearchMethod Method) {
 	string address;
 
 	// string[] headers; Really need?
-	static if (Method == ElasticsearchMethod.put || Method == ElasticsearchMethod.post) {
-		string data;
-	}
+	string data;
 
 	ElasticsearchRequest!Method request;
+}
+
+template Response(Request, R) {
+	enum Method = Request.Method;
+	alias Result = R;
+
+	ElasticsearchResponse!Method response;	
+	Result result;
 }

@@ -1,7 +1,7 @@
 module elasticsearch.connection.http;
 
 import std.conv;
-import std.net.curl : CurlException, curlPut = put, curlHead = connect;
+import std.net.curl : CurlException, curlPut = put, curlGet = get;
 import std.socket;
 import std.stdio;
 
@@ -21,10 +21,10 @@ abstract class NodeClient {
 		return address;
 	}
 
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.head) request);
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.get) request);
-	public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);	
-	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.post) request);	
+	//public abstract ElasticsearchResponse!(ElasticsearchMethod.head) perform(ElasticsearchRequest!(ElasticsearchMethod.head) request);
+	public abstract ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request);
+	public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);
+	//public abstract ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request);
 
 	public override string toString() {
 		return super.toString() ~ "(" ~ address ~ ")";
@@ -34,6 +34,14 @@ abstract class NodeClient {
 class HttpNodeClient : NodeClient {
 	public this(Address address) {
 		super(address);
+	}
+
+	public override ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request) {
+		string url = getUrl(request);
+		log!(Level.trace)("requesting %s ...", url);
+		char[] content = curlGet(url);
+		log!(Level.trace)("request finished: %s", content);
+		return ElasticsearchResponse!(ElasticsearchMethod.get)(true, 200, address, to!string(content), request);
 	}
 
 	public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
