@@ -33,6 +33,7 @@ struct ClientPool(Client) {
 			return;
 		}
 
+		log!(Level.trace)("client %s has been added to the pool", client);
 		pool.insert(client);
 	}
 

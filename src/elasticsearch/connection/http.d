@@ -25,6 +25,10 @@ abstract class NodeClient {
 	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.get) request);
 	public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);	
 	//public ElasticsearchResponse perform(ElasticsearchRequest!(HTTP.Method.post) request);	
+
+	public override string toString() {
+		return super.toString() ~ "(" ~ address ~ ")";
+	}
 }
 
 class HttpNodeClient : NodeClient {
@@ -34,9 +38,9 @@ class HttpNodeClient : NodeClient {
 
 	public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
 		string url = getUrl(request);
-		log!(Level.trace)("requesting %s", url);
+		log!(Level.trace)("requesting %s ...", url);
 		char[] content = curlPut(url, request.data);
-		log!(Level.trace)("received data %s", content);
+		log!(Level.trace)("request finished: %s", content);
 		return ElasticsearchResponse!(ElasticsearchMethod.put)(true, 200, address, to!string(content), request);
 	}	
 
