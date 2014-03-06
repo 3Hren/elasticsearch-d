@@ -5,6 +5,7 @@ import std.net.curl : CurlException, curlPut = put, curlHead = connect;
 import std.socket;
 import std.stdio;
 
+import elasticsearch.detail.log;
 import elasticsearch.domain.request.method;
 import elasticsearch.domain.request.base;
 import elasticsearch.domain.response.base;
@@ -33,9 +34,9 @@ class HttpNodeClient : NodeClient {
 
 	public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
 		string url = getUrl(request);
-		debug writeln("Requesting ", url);
+		log!(Level.trace)("requesting %s", url);
 		char[] content = curlPut(url, request.data);
-		debug writeln("Received data ", content);
+		log!(Level.trace)("received data %s", content);
 		return ElasticsearchResponse!(ElasticsearchMethod.put)(true, 200, address, to!string(content), request);
 	}	
 

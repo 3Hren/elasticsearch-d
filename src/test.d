@@ -13,7 +13,9 @@ int main(string[] args) {
 	Tweet tweet = Tweet("Wow, I'm using elasticsearch!");	
 
 	Client client = new Client();
-	IndexResponse response = client.index(request, tweet);
-	writeln(response);
+	for (int i = 0; i < 4; i++) {
+		IndexResponse response = client.index(request, tweet);
+		writeln(response);
+	}
 	return 0;
 }

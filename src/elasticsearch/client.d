@@ -12,6 +12,7 @@ import vibe.data.json;
 
 import elasticsearch.connection.http;
 import elasticsearch.connection.pool;
+import elasticsearch.detail.log;
 import elasticsearch.domain.response.base;
 import elasticsearch.domain.response.document.index;
 import elasticsearch.domain.request.base;
@@ -22,13 +23,26 @@ struct ClientSettings {
 	string index;
 }
 
+struct NodeUpdateSettings {
+	bool onStart = true;
+	bool onConnectionError = true;
+	ulong interval = 60000;
+	ulong timeout = 10;	
+}
+
+struct TransportSettings {
+	NodeUpdateSettings nodeUpdateSettings;
+	uint maxRetries = 3;
+}
+
 class Transport {
 	enum DEFAULT_HOST = "localhost";
-	enum DEFAULT_PORT = 9200;
+	enum DEFAULT_PORT = 9200;	
 
+	private TransportSettings settings;
 	private ClientPool!NodeClient pool;
 
-	public this() {
+	public this(TransportSettings settings = TransportSettings()) {
 		AddressInfo[] infos = getAddressInfo(DEFAULT_HOST, to!string(DEFAULT_PORT), SocketType.STREAM, ProtocolType.TCP);		
 		foreach (AddressInfo info; infos) {			
 			addNode(info.address);
@@ -36,7 +50,7 @@ class Transport {
 	}
 
 	public void addNode(Address address) {
-		debug writeln("Adding node ", address);
+		log!(Level.trace)("adding node %s", address);
 		pool.add(new HttpNodeClient(address));
 	}
 
@@ -49,7 +63,7 @@ class Transport {
 		try {
 			return client.perform(request);
 		} catch (CurlException error) {
-			debug writeln("Request failed: ", error.msg);
+			log!(Level.trace)("request failed: %s", error.msg);
 			pool.remove(client);
 			return perform(request);
 		}

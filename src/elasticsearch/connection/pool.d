@@ -3,6 +3,7 @@ module elasticsearch.connection.pool;
 import std.container;
 import std.stdio;
 
+import elasticsearch.detail.log;
 import elasticsearch.connection.balancer;
 
 struct ClientPool(Client) {
@@ -28,7 +29,7 @@ struct ClientPool(Client) {
 
 	public void add(Client client) {
 		if (contains(client)) {
-			debug writeln("Client ", client, " already exists in pool");
+			log!(Level.trace)("client %s already exists in pool", client);
 			return;
 		}
 
@@ -49,7 +50,7 @@ struct ClientPool(Client) {
 			}
 		}
 		if (!found) {
-
+			log!(Level.trace)("can not remove client %s: not found", client);
 		} else {
 			pool.linearRemove(pool[pos .. pos + 1]);
 		}
