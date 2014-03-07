@@ -4,10 +4,9 @@ import vibe.inet.path;
 
 import elasticsearch.domain.request.method;
 
-mixin template BaseIndexRequest() {
-    private PathEntry index;
-    private PathEntry type;
-    private PathEntry id;
+mixin template BaseIndexRequest(ElasticsearchMethod M) {
+    enum Method = M;
+    private const string path_;
 
     //q TODO: ulong version
     //pq TODO: bool create
@@ -17,31 +16,27 @@ mixin template BaseIndexRequest() {
     //q TODO: ulong ttl
     //q TODO: ulong timeout
 
-    public this() @disable;    
+    public this() @disable;        
 
     public string path() @property const {
-        immutable(PathEntry)[] entries = [index, type, id];
-        return Path(entries, true).toString;
+        return path_;
     }
 }
 
 struct ManualIndexRequest {
-    enum Method = ElasticsearchMethod.put;    
-    mixin BaseIndexRequest;
+    mixin BaseIndexRequest!(ElasticsearchMethod.put);
 
     public this(string index, string type, string id) {
-        this.index = PathEntry(index);
-        this.type = PathEntry(type);
-        this.id = PathEntry(id);        
+        immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type), PathEntry(id)];
+        this.path_ = Path(entries, true).toString;
     }
 }
 
-struct AutomaticIndexRequest {
-    enum Method = ElasticsearchMethod.post;
-    mixin BaseIndexRequest;
+struct AutomaticIndexRequest {    
+    mixin BaseIndexRequest!(ElasticsearchMethod.post);
 
     public this(string index, string type) {
-        this.index = PathEntry(index);
-        this.type = PathEntry(type);
+        immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type)];
+        this.path_ = Path(entries, true).toString;
     }
 }
