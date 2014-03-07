@@ -37,8 +37,8 @@ struct NodesInfoRequest {
         this([node], type);
     }
 
-    public this(string[] nodes, Type type = Type.all) {
-        this.nodes = nodes;
+    public this(in string[] nodes, Type type = Type.all) {
+        this.nodes = nodes.dup;
         this.type = type;
     }
 
