@@ -34,7 +34,7 @@ class Client {
     //public IndexResponse index(T)(string index, T post) {}
 
     // Full parameters control.
-    public IndexResponse index(T)(IndexRequest action, T post) {
+    public IndexResponse index(T)(in IndexRequest action, T post) {
         alias Method = IndexRequest.Method;
 
         immutable string path = action.path();          
