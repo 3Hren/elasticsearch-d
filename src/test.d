@@ -19,7 +19,7 @@ int main(string[] args) {
     IndexResponse indexResponse = client.index(indexRequest, tweet);
     log!(Level.trace)(indexResponse);
 
-    //NodesInfoRequest nodesInfoRequest = NodesInfoRequest(NodesInfoRequest.Type.all);
+    NodesInfoRequest nodesInfoRequest = NodesInfoRequest(NodesInfoRequest.Type.all);
     //NodesInfoResponse.Result nodesInfo = client.nodesInfo(nodesInfoRequest);
     return 0;
 }

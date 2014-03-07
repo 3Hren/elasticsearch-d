@@ -1,5 +1,6 @@
 module elasticsearch.domain.request.cluster.node.info;
 
+import std.algorithm;
 import std.array;
 import std.conv;
 import std.stdio;
@@ -24,17 +25,38 @@ struct NodesInfoRequest {
         plugins     = 1 << 9,
         all = settings | os | process | jvm | threadPool | network | transport | http | plugins
     }
+    
+    private string[] nodes;
+    private Type type = Type.all;
 
-    Type type;    
+    public this(Type type) {
+        this.type = type;
+    }
 
-    public string path() {             
-        // TODO: Selective nodes. 
-        return "/_nodes/_all/" ~ typeToString(type);
+    public this(string node, Type type = Type.all) {
+        this([node], type);
+    }
+
+    public this(string[] nodes, Type type = Type.all) {
+        this.nodes = nodes;
+        this.type = type;
+    }
+
+    public string path() {
+        if (nodes.empty) {
+            return "/_nodes/_all/" ~ typeToString(type);
+        }
+                
+        return "/_nodes/" ~ to!string(joiner([to!string(joiner(nodes, ",")), typeToString(type)], "/"));
     }
 
     private static string typeToString(Type type) {
-        if (type == Type.none || type == Type.all) {
+        if (type == Type.none) {
             return to!string(type);
+        }
+
+        if (type == Type.all) {
+            return "";
         }
 
         auto writer = appender!string;
@@ -52,6 +74,10 @@ struct NodesInfoRequest {
 }
 
 unittest {
+    assert("/_nodes/_all/" == NodesInfoRequest().path);
+}
+
+unittest {
     assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).path);    
     assert("/_nodes/_all/settings" == NodesInfoRequest(NodesInfoRequest.Type.settings).path);
     assert("/_nodes/_all/os" == NodesInfoRequest(NodesInfoRequest.Type.os).path);
@@ -62,7 +88,14 @@ unittest {
     assert("/_nodes/_all/transport" == NodesInfoRequest(NodesInfoRequest.Type.transport).path);
     assert("/_nodes/_all/http" == NodesInfoRequest(NodesInfoRequest.Type.http).path);
     assert("/_nodes/_all/plugins" == NodesInfoRequest(NodesInfoRequest.Type.plugins).path);
-    assert("/_nodes/_all/all" == NodesInfoRequest(NodesInfoRequest.Type.all).path);
+    assert("/_nodes/_all/" == NodesInfoRequest(NodesInfoRequest.Type.all).path);
 
     assert("/_nodes/_all/settings,os" == NodesInfoRequest(NodesInfoRequest.Type.settings | NodesInfoRequest.Type.os).path);
+}
+
+unittest {
+    assert("/_nodes/node1/" == NodesInfoRequest("node1").path);
+    assert("/_nodes/node1/none" == NodesInfoRequest("node1", NodesInfoRequest.Type.none).path);
+    assert("/_nodes/node1,node2/" == NodesInfoRequest(["node1", "node2"]).path);
+    assert("/_nodes/node1,node2/none" == NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).path);    
 }
