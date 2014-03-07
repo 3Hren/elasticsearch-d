@@ -6,7 +6,7 @@
 	"authors": [
 		"Evgeny Safronov"
 	],
-	"versions": ["VibeCustomMain", "VibeNewSerialization"],
+	"versions": ["VibeCustomMain", "VibeNewSerialization", "FunctionalTesting"],
 	"targetType": "executable",
 	"sourcePaths": ["."],
 	"dependencies": {		
