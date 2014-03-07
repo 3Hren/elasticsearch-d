@@ -17,6 +17,8 @@ mixin template BaseIndexRequest() {
     //q TODO: ulong ttl
     //q TODO: ulong timeout
 
+    public this() @disable;    
+
     public string path() @property const {
         immutable(PathEntry)[] entries = [index, type, id];
         return Path(entries, true).toString;
