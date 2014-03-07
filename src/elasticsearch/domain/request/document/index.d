@@ -43,5 +43,3 @@ struct AutomaticIndexRequest {
         this.type = PathEntry(type);
     }
 }
-
-alias IndexRequest = ManualIndexRequest;

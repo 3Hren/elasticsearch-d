@@ -39,7 +39,7 @@ unittest {
     }
 
     Client client = new Client();
-    IndexRequest request = IndexRequest("twitter", "tweet", "1");    
+    ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");    
     Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
     IndexResponse!ManualIndexRequest response = client.index(request, tweet);
 
