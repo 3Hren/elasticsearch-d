@@ -90,7 +90,17 @@ struct NodesInfoRequest {
 }
 
 unittest {
-    assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).path);
+    assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).path);    
+    assert("/_nodes/_all/settings" == NodesInfoRequest(NodesInfoRequest.Type.settings).path);
+    assert("/_nodes/_all/os" == NodesInfoRequest(NodesInfoRequest.Type.os).path);
+    assert("/_nodes/_all/process" == NodesInfoRequest(NodesInfoRequest.Type.process).path);
+    assert("/_nodes/_all/jvm" == NodesInfoRequest(NodesInfoRequest.Type.jvm).path);
+    assert("/_nodes/_all/thread_pool" == NodesInfoRequest(NodesInfoRequest.Type.threadPool).path);
+    assert("/_nodes/_all/network" == NodesInfoRequest(NodesInfoRequest.Type.network).path);
+    assert("/_nodes/_all/transport" == NodesInfoRequest(NodesInfoRequest.Type.transport).path);
+    assert("/_nodes/_all/http" == NodesInfoRequest(NodesInfoRequest.Type.http).path);
+    assert("/_nodes/_all/plugins" == NodesInfoRequest(NodesInfoRequest.Type.plugins).path);
     assert("/_nodes/_all/all" == NodesInfoRequest(NodesInfoRequest.Type.all).path);
+
     assert("/_nodes/_all/settings,os" == NodesInfoRequest(NodesInfoRequest.Type.settings | NodesInfoRequest.Type.os).path);
 }
