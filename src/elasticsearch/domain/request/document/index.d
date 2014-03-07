@@ -6,7 +6,7 @@ import elasticsearch.domain.request.method;
 
 mixin template BaseIndexRequest(ElasticsearchMethod M) {
     enum Method = M;
-    private const string path_;
+    private const string path;
 
     //q TODO: ulong version
     //pq TODO: bool create
@@ -18,8 +18,8 @@ mixin template BaseIndexRequest(ElasticsearchMethod M) {
 
     public this() @disable;        
 
-    public string path() @property const {
-        return path_;
+    public string uri() @property const {
+        return path;
     }
 }
 
@@ -28,7 +28,7 @@ struct ManualIndexRequest {
 
     public this(string index, string type, string id) {
         immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type), PathEntry(id)];
-        this.path_ = Path(entries, true).toString;
+        this.path = Path(entries, true).toString;
     }
 }
 
@@ -37,6 +37,6 @@ struct AutomaticIndexRequest {
 
     public this(string index, string type) {
         immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type)];
-        this.path_ = Path(entries, true).toString;
+        this.path = Path(entries, true).toString;
     }
 }

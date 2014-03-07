@@ -61,6 +61,6 @@ class HttpNodeClient : NodeClient {
     }
 
     private string getUrl(T)(T request) {
-        return address ~ request.path;
+        return address ~ request.uri;
     }
 }

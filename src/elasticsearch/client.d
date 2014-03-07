@@ -41,9 +41,9 @@ class Client {
     public IndexResponse!Request index(Request, T)(in Request action, T post) {
         alias Method = Request.Method;        
 
-        immutable string path = action.path();          
+        immutable string uri = action.uri();          
         immutable string data = serializeToJson(post).toString();       
-        ElasticsearchRequest!Method request = ElasticsearchRequest!Method(path, data);
+        ElasticsearchRequest!Method request = ElasticsearchRequest!Method(uri, data);
         ElasticsearchResponse!Method response = transport.perform(request);
         IndexResponse!Request.Result result = deserializeJson!(IndexResponse!Request.Result)(response.data);
         return IndexResponse!Request(response, result);
@@ -52,8 +52,8 @@ class Client {
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {
         alias Method = NodesInfoRequest.Method;
 
-        immutable string path = action.path();
-        ElasticsearchRequest!Method request = ElasticsearchRequest!Method(path);
+        immutable string uri = action.uri();
+        ElasticsearchRequest!Method request = ElasticsearchRequest!Method(uri);
         ElasticsearchResponse!Method response = transport.perform(request);
         NodesInfoResponse.Result result = deserializeJson!(NodesInfoResponse.Result)(response.data);
         return result;
