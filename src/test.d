@@ -11,14 +11,6 @@ void main() {}
 
 version (FunctionalTesting) {
 
-unittest {
-    log!(Level.info)("Performing 'NodesInfoRequest' with none type (updating nodes) ...");
-
-    Client client = new Client();
-    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.none);
-    NodesInfoResponse.Result nodesInfo = client.nodesInfo(request);
-}
-
 unittest {    
     log!(Level.info)("Performing 'IndexRequest' with full parameters set ...");
 
@@ -27,9 +19,110 @@ unittest {
     }
 
     Client client = new Client();
-    IndexRequest indexRequest = IndexRequest("twitter", "tweet", "1");    
+    IndexRequest request = IndexRequest("twitter", "tweet", "1");    
     Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
-    IndexResponse indexResponse = client.index(indexRequest, tweet);
+    IndexResponse response = client.index(request, tweet);
+    log!(Level.info)("'IndexRequest' finished: %s\n", response);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'None' type (updating nodes) ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.none);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'Settings' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.settings);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'OS' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.os);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'Process' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.process);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'JVM' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.jvm);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'ThreadPool' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.threadPool);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'Network' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.network);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'HTTP' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.http);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'Plugins' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.plugins);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'NodesInfoRequest' with 'Mixed OS and Settings' type ...");
+
+    Client client = new Client();
+    NodesInfoRequest request = NodesInfoRequest(NodesInfoRequest.Type.os | NodesInfoRequest.Type.settings);
+    NodesInfoResponse.Result result = client.nodesInfo(request);
+
+    log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
 }
 
 }
