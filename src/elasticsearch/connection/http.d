@@ -1,7 +1,7 @@
 module elasticsearch.connection.http;
 
 import std.conv;
-import std.net.curl : CurlException, curlPut = put, curlGet = get;
+import std.net.curl : CurlException;
 import std.socket;
 import std.stdio;
 
@@ -24,7 +24,7 @@ abstract class NodeClient {
     //public abstract ElasticsearchResponse!(ElasticsearchMethod.head) perform(ElasticsearchRequest!(ElasticsearchMethod.head) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);
-    //public abstract ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request);
+    public abstract ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request);
 
     public override string toString() {
         return super.toString() ~ "(" ~ address ~ ")";
@@ -39,7 +39,7 @@ class HttpNodeClient : NodeClient {
     public override ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request) {
         string url = getUrl(request);
         log!(Level.trace)("requesting %s ...", url);
-        char[] content = curlGet(url);
+        char[] content = std.net.curl.get(url);
         log!(Level.trace)("request finished: %s", content);
         return ElasticsearchResponse!(ElasticsearchMethod.get)(true, 200, address, to!string(content), request);
     }
@@ -47,10 +47,18 @@ class HttpNodeClient : NodeClient {
     public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
         string url = getUrl(request);
         log!(Level.trace)("requesting %s ...", url);
-        char[] content = curlPut(url, request.data);
+        char[] content = std.net.curl.put(url, request.data);
         log!(Level.trace)("request finished: %s", content);
         return ElasticsearchResponse!(ElasticsearchMethod.put)(true, 200, address, to!string(content), request);
-    }   
+    }
+
+    public override ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request) {
+        string url = getUrl(request);
+        log!(Level.trace)("requesting %s ...", url);
+        char[] content = std.net.curl.post(url, request.data);
+        log!(Level.trace)("request finished: %s", content);
+        return ElasticsearchResponse!(ElasticsearchMethod.post)(true, 200, address, to!string(content), request);
+    }
 
     private string getUrl(T)(T request) {
         return address ~ request.path;

@@ -13,6 +13,6 @@ struct IndexResult {
     bool created;
 }
 
-struct IndexResponse {
-    mixin Response!(IndexRequest, IndexResult);
+struct IndexResponse(Request) {
+    mixin Response!(Request, IndexResult);
 }

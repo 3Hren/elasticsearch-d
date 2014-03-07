@@ -30,19 +30,23 @@ class Client {
 
     // More control over parameters.
     //public IndexResponse index(T)(string index, string type, string id, T post) {}
-    //public IndexResponse index(T)(string index, string type, T post) {}
-    //public IndexResponse index(T)(string index, T post) {}
+
+    public IndexResponse!AutomaticIndexRequest index(T)(string index, string type, T post) {
+        return this.index(AutomaticIndexRequest(index, type), post);        
+    }
+
+    //public IndexResponse index(T)(string index, T post) {}    
 
     // Full parameters control.
-    public IndexResponse index(T)(in IndexRequest action, T post) {
-        alias Method = IndexRequest.Method;
+    public IndexResponse!Request index(Request, T)(in Request action, T post) {
+        alias Method = Request.Method;        
 
         immutable string path = action.path();          
         immutable string data = serializeToJson(post).toString();       
         ElasticsearchRequest!Method request = ElasticsearchRequest!Method(path, data);
         ElasticsearchResponse!Method response = transport.perform(request);
-        IndexResponse.Result result = deserializeJson!(IndexResponse.Result)(response.data);
-        return IndexResponse(response, result);
+        IndexResponse!Request.Result result = deserializeJson!(IndexResponse!Request.Result)(response.data);
+        return IndexResponse!Request(response, result);
     }
 
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {
