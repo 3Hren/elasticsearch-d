@@ -1,9 +1,9 @@
 module elasticsearch.domain.request.method;
 
 enum ElasticsearchMethod {
-	head,
-	get,
-	put,
-	post,
-	del
+    head,
+    get,
+    put,
+    post,
+    del
 }

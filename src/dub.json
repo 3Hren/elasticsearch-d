@@ -15,5 +15,6 @@
 	"subPackages": [
 		"./elasticsearch/"
 	],
-	"libs": ["curl"]	
+	"libs": ["curl"],
+	"buildOptions": ["unittests"]
 }

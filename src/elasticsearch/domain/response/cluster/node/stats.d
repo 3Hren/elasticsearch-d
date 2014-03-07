@@ -9,10 +9,10 @@ struct NodeStats {
 }
 
 struct NodesStats {
-	@name("cluster_name") string clusterName;
-	NodeStats[string] nodes;
+    @name("cluster_name") string clusterName;
+    NodeStats[string] nodes;
 }
 
 struct NodesStatsResponse {
-	mixin Response!(NodesStatsRequest, NodesStats);
+    mixin Response!(NodesStatsRequest, NodesStats);
 }
