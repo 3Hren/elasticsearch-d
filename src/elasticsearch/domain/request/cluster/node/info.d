@@ -25,24 +25,21 @@ struct NodesInfoRequest {
         all = settings | os | process | jvm | threadPool | network | transport | http | plugins
     }
 
-    Type type;
+    Type type;    
 
-    public string path() {              
-        return "/_nodes/_all/" ~ mapType(type);
+    public string path() {             
+        // TODO: Selective nodes. 
+        return "/_nodes/_all/" ~ typeToString(type);
     }
 
-    private pure bool hasFlag(in Type type) {        
-        return (this.type & type) == type;
-    }
-
-    private string mapType(in Type type) {
+    private static string typeToString(Type type) {
         if (type == Type.none || type == Type.all) {
             return to!string(type);
         }
 
         auto writer = appender!string;
         foreach (immutable flag; EnumMembers!Type) {
-            if (hasFlag(flag)) {
+            if ((type & flag) == flag) {
                 if (!writer.data.empty()) {
                     writer.put(",");
                 }
