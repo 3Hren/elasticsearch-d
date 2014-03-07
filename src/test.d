@@ -28,7 +28,6 @@ unittest {
 
     assert("twitter" == result.index);
     assert("tweet" == result.type);
-    //assert(isString(result.id));
 }    
 
 unittest {    

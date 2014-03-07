@@ -10,8 +10,7 @@
 	"targetType": "executable",
 	"sourcePaths": ["."],
 	"dependencies": {		
-		"vibe-d": {"version": "~master"},
-		"dunit": {"version": "~master"}
+		"vibe-d": {"version": "~master"}
 	},
 	"subPackages": [
 		"./elasticsearch/"
