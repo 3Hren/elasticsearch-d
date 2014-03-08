@@ -21,15 +21,17 @@ struct ClientSettings {
 }
 
 class Client {
-    private ClientSettings clientSettings = ClientSettings("default");
+    private ClientSettings settings = ClientSettings("default");
     private Transport transport;
 
     public this() {
-        transport = new Transport();
+        this.transport = new Transport();
     }
 
-    // Index will be default from settings. Type will be T type name with 's' suffix. Id will be generated automatically.
-    //public IndexResponse index(T)(T post) {}  
+    public this(ClientSettings settings) {
+        this.settings = settings;
+        this();
+    }
 
     public IndexResponse!ManualIndexRequest index(T)(string index, string type, string id, T post) {
         return this.index(ManualIndexRequest(index, type, id), post);
@@ -40,8 +42,11 @@ class Client {
     }
 
     public IndexResponse!AutomaticIndexRequest index(T)(string index, T post) {
-        auto type = Pluralizer.make(T.stringof.toLower);
-        return this.index(AutomaticIndexRequest(index, type), post);
+        return this.index(index, Pluralizer.make(T.stringof.toLower), post);
+    }
+
+    public IndexResponse!AutomaticIndexRequest index(T)(T post) {
+        return this.index(settings.index, post);
     }
 
     public IndexResponse!Request index(Request, T)(in Request action, T post) {

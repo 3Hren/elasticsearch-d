@@ -19,7 +19,7 @@ unittest {
     }
 
     Client client = new Client();
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
     IndexResponse!ManualIndexRequest response = client.index("twitter", "tweet", "1", tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
@@ -58,8 +58,27 @@ unittest {
     }
 
     Client client = new Client();
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id and type specifying!");    
     IndexResponse!AutomaticIndexRequest response = client.index("twitter", tweet);
+
+    log!(Level.info)("'IndexRequest' finished: %s\n", response);
+
+    IndexResult result = response.result;
+
+    assert("twitter" == result.index);
+    assert("tweets" == result.type);
+}
+
+unittest {    
+    log!(Level.info)("Performing 'IndexRequest' with specifying, emmm, nothing. Using default index ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client(ClientSettings("twitter"));
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch with specifying nothing!");
+    IndexResponse!AutomaticIndexRequest response = client.index(tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
 
