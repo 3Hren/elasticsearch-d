@@ -5,6 +5,7 @@ import std.string;
 import vibe.data.serialization;
 import vibe.data.json;
 
+import elasticsearch.detail.inflect;
 import elasticsearch.detail.log;
 import elasticsearch.domain.response.base;
 import elasticsearch.domain.response.cluster.node.info;
@@ -17,55 +18,6 @@ import elasticsearch.domain.transport;
 
 struct ClientSettings {
     string index;
-}
-
-struct ReplacementRule {
-    std.regex.Regex!char rx;
-    string replacement;
-
-    public string apply(in string word) @safe nothrow {
-        try {
-            return std.regex.replaceAll(word, rx, replacement);
-        } catch (Exception) {
-            return word;
-        }
-    }
-}
-
-struct Pluralizer {
-    private static string[string] cache; 
-    private static ReplacementRule[] rules;
-
-    static this() {
-        rules = [
-            ReplacementRule(std.regex.regex(`$`), `s`)
-        ];
-    }
-
-    public static string makePlural(in string word) {
-        if (word !in cache) {
-            cache[word] = apply(word);
-        }
-        return cache[word];
-    }
-
-    private static string apply(in string word) {
-        string result = word;
-
-        foreach (rule; rules.reverse) {   
-            result = rule.apply(word);         
-            if (result != word) {
-                return result;
-            }
-        }
-
-        return result;
-    }
-}
-
-unittest {
-    assert("types", Pluralizer.makePlural("type"));
-    assert("types", Pluralizer.makePlural("type"));
 }
 
 class Client {
@@ -88,8 +40,7 @@ class Client {
     }
 
     public IndexResponse!AutomaticIndexRequest index(T)(string index, T post) {
-        immutable string typename = T.stringof.toLower;
-        immutable string type = Pluralizer.makePlural(typename);
+        auto type = Pluralizer.make(T.stringof.toLower);
         return this.index(AutomaticIndexRequest(index, type), post);
     }
 
