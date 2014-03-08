@@ -29,13 +29,15 @@ class Client {
     //public IndexResponse index(T)(T post) {}  
 
     // More control over parameters.
-    //public IndexResponse index(T)(string index, string type, string id, T post) {}
+    public IndexResponse!ManualIndexRequest index(T)(string index, string type, string id, T post) {
+        return this.index(ManualIndexRequest(index, type, id), post);
+    }
 
     public IndexResponse!AutomaticIndexRequest index(T)(string index, string type, T post) {
         return this.index(AutomaticIndexRequest(index, type), post);        
     }
 
-    //public IndexResponse index(T)(string index, T post) {}    
+    // TODO: public IndexResponse index(T)(string index, T post) {}, but need some king of smart lexical parser.
 
     // Full parameters control.
     public IndexResponse!Request index(Request, T)(in Request action, T post) {

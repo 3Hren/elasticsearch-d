@@ -12,6 +12,26 @@ void main() {}
 version (FunctionalTesting) {
 
 unittest {    
+    log!(Level.info)("Performing 'IndexRequest' with specifying just index, type and id ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client();
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");    
+    IndexResponse!ManualIndexRequest response = client.index("twitter", "tweet", "1", tweet);
+
+    log!(Level.info)("'IndexRequest' finished: %s\n", response);
+
+    IndexResult result = response.result;
+
+    assert("twitter" == result.index);
+    assert("tweet" == result.type);
+    assert("1" == result.id);
+}
+
+unittest {    
     log!(Level.info)("Performing 'IndexRequest' with specifying just index and type ...");
 
     struct Tweet {
