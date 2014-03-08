@@ -38,6 +38,10 @@ mixin template BaseIndexRequest(ElasticsearchMethod M) {
     public void version_(ulong value) @property {
         parameters["version"] = to!string(value);
     }
+
+    public void create(bool value) @property {
+        parameters["op_type"] = "create";
+    }
 }
 
 struct ManualIndexRequest {
@@ -64,8 +68,8 @@ unittest {
     assert("/index/type/id?version=1" == request.uri);
 }
 
-//unittest {
-//    auto request = ManualIndexRequest("index", "type", "id");
-//    request.create = true;
-//    assert("/index/type/id?op_type=create" == request.uri);
-//}
+unittest {
+    auto request = ManualIndexRequest("index", "type", "id");
+    request.create = true;
+    assert("/index/type/id?op_type=create" == request.uri);
+}
