@@ -5,6 +5,7 @@ import std.string;
 import vibe.data.serialization;
 import vibe.data.json;
 
+import elasticsearch.exception;
 import elasticsearch.detail.inflect;
 import elasticsearch.detail.log;
 import elasticsearch.domain.response.base;
@@ -55,7 +56,7 @@ class Client {
         immutable string uri = action.uri();          
         immutable string data = serializeToJson(post).toString();       
         ElasticsearchRequest!Method request = ElasticsearchRequest!Method(uri, data);
-        ElasticsearchResponse!Method response = transport.perform(request);
+        ElasticsearchResponse!Method response = perform(request);
         IndexResponse!Request.Result result = deserializeJson!(IndexResponse!Request.Result)(response.data);
         return IndexResponse!Request(response, result);
     }
@@ -65,8 +66,19 @@ class Client {
 
         immutable string uri = action.uri();
         ElasticsearchRequest!Method request = ElasticsearchRequest!Method(uri);
-        ElasticsearchResponse!Method response = transport.perform(request);
+        ElasticsearchResponse!Method response = perform(request);
         NodesInfoResponse.Result result = deserializeJson!(NodesInfoResponse.Result)(response.data);
         return result;
+    }
+
+    private ElasticsearchResponse!(Method) perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
+        ElasticsearchResponse!Method response = transport.perform(request);
+        if (response.code != 200) {
+            Json result = deserializeJson!Json(response.data);
+            auto reason = to!string(result["error"]);
+            throw new ElasticsearchError!Method(reason, response);
+        }
+
+        return response;
     }
 }

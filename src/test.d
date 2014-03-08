@@ -6,6 +6,7 @@ import elasticsearch.domain.request.cluster.node.info;
 import elasticsearch.domain.request.document.index;
 import elasticsearch.domain.response.cluster.node.info;
 import elasticsearch.domain.response.document.index;
+import elasticsearch.exception;
 
 void main() {}
 
@@ -101,6 +102,28 @@ unittest {
     IndexResponse!ManualIndexRequest response = client.index(request, tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
+}
+
+unittest {    
+    log!(Level.info)("Performing 'IndexRequest' with full parameters set with version ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client();
+    ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");
+    request.version_ = 1;
+
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
+    try {
+        IndexResponse!ManualIndexRequest response = client.index(request, tweet);
+        assert(false);
+    } catch (ElasticsearchError!(ManualIndexRequest.Method) err) {
+        assert(err.response.code == 409);
+    } finally {
+        log!(Level.info)("'IndexRequest' finished\n");
+    }    
 }
 
 unittest {

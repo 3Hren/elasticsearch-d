@@ -1,14 +1,18 @@
 module elasticsearch.domain.request.document.index;
 
+import std.algorithm;
+import std.conv;
+
 import vibe.inet.path;
 
 import elasticsearch.domain.request.method;
 
+
+
 mixin template BaseIndexRequest(ElasticsearchMethod M) {
     enum Method = M;
     private const string path;
-
-    //q TODO: ulong version
+    private string[string] parameters;
     //pq TODO: bool create
     //q TODO: string routing
     //q TODO: string parent
@@ -19,7 +23,20 @@ mixin template BaseIndexRequest(ElasticsearchMethod M) {
     public this() @disable;        
 
     public string uri() @property const {
-        return path;
+        if (parameters.length == 0) {
+            return path;
+        }
+
+        string[] queries;
+        foreach (name, value; parameters) {
+            queries ~= name ~ "=" ~ value;
+        }
+        
+        return path ~ "?" ~ to!string(joiner(queries, "&"));
+    }
+
+    public void version_(ulong value) @property {
+        parameters["version"] = to!string(value);
     }
 }
 
@@ -40,3 +57,15 @@ struct AutomaticIndexRequest {
         this.path = Path(entries, true).toString;
     }
 }
+
+unittest {
+    auto request = ManualIndexRequest("index", "type", "id");
+    request.version_ = 1;
+    assert("/index/type/id?version=1" == request.uri);
+}
+
+//unittest {
+//    auto request = ManualIndexRequest("index", "type", "id");
+//    request.create = true;
+//    assert("/index/type/id?op_type=create" == request.uri);
+//}
