@@ -2,6 +2,7 @@ module elasticsearch.domain.request.document.index;
 
 import std.algorithm;
 import std.conv;
+import std.datetime;
 import std.uri;
 
 import vibe.inet.path;
@@ -46,6 +47,10 @@ mixin template BaseIndexRequest(ElasticsearchMethod M) {
 
     public void timestamp(string timestamp) @property {
         addParameter("timestamp", timestamp);
+    }
+
+    public void timestamp(DateTime timestamp) @property {
+        addParameter("timestamp", timestamp.toISOExtString());
     }
 
     public void ttl(string ttl) @property {
@@ -106,6 +111,12 @@ unittest {
 unittest {
     auto request = ManualIndexRequest("index", "type", "id");
     request.timestamp = "2009-11-15T14:12:12";    
+    assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
+}
+
+unittest {
+    auto request = ManualIndexRequest("index", "type", "id");
+    request.timestamp = DateTime(2009, 11, 15, 14, 12, 12);
     assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
 }
 
