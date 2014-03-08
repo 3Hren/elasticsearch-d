@@ -48,7 +48,26 @@ unittest {
 
     assert("twitter" == result.index);
     assert("tweet" == result.type);
-}    
+}   
+
+unittest {    
+    log!(Level.info)("Performing 'IndexRequest' with specifying just index ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client();
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");    
+    IndexResponse!AutomaticIndexRequest response = client.index("twitter", tweet);
+
+    log!(Level.info)("'IndexRequest' finished: %s\n", response);
+
+    IndexResult result = response.result;
+
+    assert("twitter" == result.index);
+    assert("tweets" == result.type);
+} 
 
 unittest {    
     log!(Level.info)("Performing 'IndexRequest' with full parameters set ...");

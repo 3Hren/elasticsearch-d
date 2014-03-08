@@ -1,5 +1,7 @@
 module elasticsearch.client;
 
+import std.string;
+
 import vibe.data.serialization;
 import vibe.data.json;
 
@@ -17,6 +19,55 @@ struct ClientSettings {
     string index;
 }
 
+struct ReplacementRule {
+    std.regex.Regex!char rx;
+    string replacement;
+
+    public string apply(in string word) @safe nothrow {
+        try {
+            return std.regex.replaceAll(word, rx, replacement);
+        } catch (Exception) {
+            return word;
+        }
+    }
+}
+
+struct Pluralizer {
+    private static string[string] cache; 
+    private static ReplacementRule[] rules;
+
+    static this() {
+        rules = [
+            ReplacementRule(std.regex.regex(`$`), `s`)
+        ];
+    }
+
+    public static string makePlural(in string word) {
+        if (word !in cache) {
+            cache[word] = apply(word);
+        }
+        return cache[word];
+    }
+
+    private static string apply(in string word) {
+        string result = word;
+
+        foreach (rule; rules.reverse) {   
+            result = rule.apply(word);         
+            if (result != word) {
+                return result;
+            }
+        }
+
+        return result;
+    }
+}
+
+unittest {
+    assert("types", Pluralizer.makePlural("type"));
+    assert("types", Pluralizer.makePlural("type"));
+}
+
 class Client {
     private ClientSettings clientSettings = ClientSettings("default");
     private Transport transport;
@@ -28,7 +79,6 @@ class Client {
     // Index will be default from settings. Type will be T type name with 's' suffix. Id will be generated automatically.
     //public IndexResponse index(T)(T post) {}  
 
-    // More control over parameters.
     public IndexResponse!ManualIndexRequest index(T)(string index, string type, string id, T post) {
         return this.index(ManualIndexRequest(index, type, id), post);
     }
@@ -37,9 +87,12 @@ class Client {
         return this.index(AutomaticIndexRequest(index, type), post);        
     }
 
-    // TODO: public IndexResponse index(T)(string index, T post) {}, but need some king of smart lexical parser.
+    public IndexResponse!AutomaticIndexRequest index(T)(string index, T post) {
+        immutable string typename = T.stringof.toLower;
+        immutable string type = Pluralizer.makePlural(typename);
+        return this.index(AutomaticIndexRequest(index, type), post);
+    }
 
-    // Full parameters control.
     public IndexResponse!Request index(Request, T)(in Request action, T post) {
         alias Method = Request.Method;        
 
