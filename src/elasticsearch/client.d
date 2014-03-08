@@ -71,7 +71,7 @@ class Client {
         return result;
     }
 
-    private ElasticsearchResponse!(Method) perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
+    private ElasticsearchResponse!Method perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
         ElasticsearchResponse!Method response = transport.perform(request);
         if (response.code != 200) {
             Json result = deserializeJson!Json(response.data);
