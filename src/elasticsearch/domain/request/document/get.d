@@ -12,6 +12,8 @@ struct GetRequest {
     enum Method = ElasticsearchMethod.get;
     mixin UriBasedRequest;
 
+    public this() @disable;
+
     public this(string index, string type, string id) {
         setPath(index, type, id);
     }

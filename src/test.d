@@ -242,7 +242,7 @@ unittest {
 }
 
 unittest {
-    log!(Level.info)("Performing 'GetRequest' with automatic index and type detecting ...");
+    log!(Level.info)("Performing 'GetRequest' with automatic index detecting ...");
 
     struct Tweet {
         string message; 
