@@ -5,7 +5,7 @@ import elasticsearch.domain.request.document.get;
 
 import vibe.data.json;
 
-struct GetResponse(T) {
+struct GetResult(T) {
     @name("_index")
     string index;
 
@@ -23,4 +23,8 @@ struct GetResponse(T) {
 
     @name("_source")
     T source;
+}
+
+struct GetResponse(T) {
+    mixin Response!(GetRequest, GetResult!(T));
 }
