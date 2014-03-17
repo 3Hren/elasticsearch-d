@@ -7,27 +7,14 @@ import std.uri;
 
 import vibe.inet.path;
 
+import elasticsearch.domain.request.base;
 import elasticsearch.domain.request.method;
 
 mixin template BaseIndexRequest(ElasticsearchMethod M) {
     enum Method = M;
-    private const string path;
-    private string[string] parameters;       
+    mixin UriBasedRequest;
 
-    public this() @disable;        
-
-    public string uri() @property const {
-        if (parameters.length == 0) {
-            return path;
-        }
-
-        string[] queries;
-        foreach (name, value; parameters) {
-            queries ~= name ~ "=" ~ value;
-        }
-        
-        return path ~ "?" ~ to!string(joiner(queries, "&"));
-    }
+    public this() @disable;    
 
     public void version_(ulong value) @property {
         addParameter("version", to!string(value));
@@ -60,27 +47,21 @@ mixin template BaseIndexRequest(ElasticsearchMethod M) {
     public void timeout(string timeout) @property {
         addParameter("timeout", timeout);
     }
-
-    private void addParameter(string name, string value) {
-        parameters[name] = std.uri.encodeComponent(value);
-    }
 }
 
 struct ManualIndexRequest {
     mixin BaseIndexRequest!(ElasticsearchMethod.put);
 
-    public this(string index, string type, string id) {
-        immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type), PathEntry(id)];
-        this.path = Path(entries, true).toString;
+    public this(string index, string type, string id) {        
+        setPath(index, type, id);
     }
 }
 
 struct AutomaticIndexRequest {    
     mixin BaseIndexRequest!(ElasticsearchMethod.post);
 
-    public this(string index, string type) {
-        immutable(PathEntry)[] entries = [PathEntry(index), PathEntry(type)];
-        this.path = Path(entries, true).toString;
+    public this(string index, string type) {        
+        setPath(index, type);
     }
 }
 

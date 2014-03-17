@@ -3,6 +3,7 @@ import std.stdio;
 import elasticsearch.client;
 import elasticsearch.detail.log;
 import elasticsearch.domain.request.cluster.node.info;
+import elasticsearch.domain.request.document.get;
 import elasticsearch.domain.request.document.index;
 import elasticsearch.domain.response.cluster.node.info;
 import elasticsearch.domain.response.document.index;
@@ -224,6 +225,20 @@ unittest {
     NodesInfoResponse.Result result = client.nodesInfo(request);
 
     log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
+}
+
+unittest {
+    log!(Level.info)("Performing 'GetRequest' ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client();
+    GetRequest request = GetRequest("twitter", "tweet", "1");
+    Tweet tweet = client.get!Tweet(request);
+
+    log!(Level.info)("'GetRequest' finished: %s\n", tweet);
 }
 
 }

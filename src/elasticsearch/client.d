@@ -10,10 +10,12 @@ import elasticsearch.detail.inflect;
 import elasticsearch.detail.log;
 import elasticsearch.domain.response.base;
 import elasticsearch.domain.response.cluster.node.info;
+import elasticsearch.domain.response.document.get;
 import elasticsearch.domain.response.document.index;
 import elasticsearch.domain.request.base;
 import elasticsearch.domain.request.method;
 import elasticsearch.domain.request.cluster.node.info;
+import elasticsearch.domain.request.document.get;
 import elasticsearch.domain.request.document.index;
 import elasticsearch.domain.transport;
 
@@ -58,6 +60,16 @@ class Client {
         ElasticsearchResponse!Method response = perform(request);
         IndexResponse!Request.Result result = deserializeJson!(IndexResponse!Request.Result)(response.data);
         return IndexResponse!Request(response, result);
+    }
+
+    public T get(T)(in GetRequest action) {
+        alias Method = GetRequest.Method;
+
+        auto request = ElasticsearchRequest!Method(action.uri);        
+        auto response = perform(request);
+
+        GetResponse!T result = deserializeJson!(GetResponse!T)(response.data);
+        return result.source;
     }
 
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {
