@@ -241,4 +241,20 @@ unittest {
     log!(Level.info)("'GetRequest' finished: %s\n", tweet);
 }
 
+unittest {
+    log!(Level.info)("Performing 'GetRequest' with automatic index and type detecting ...");
+
+    struct Tweet {
+        string message; 
+    }
+
+    Client client = new Client();
+    try {
+        Tweet tweet = client.get!Tweet("tweet", "1");
+        log!(Level.info)("'GetRequest' finished: %s\n", tweet);
+    } catch (Error err) {
+        log!(Level.info)("'GetRequest' finished: %s\n", err.msg);
+    }
+}
+
 }

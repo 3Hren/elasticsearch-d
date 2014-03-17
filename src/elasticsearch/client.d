@@ -62,6 +62,12 @@ class Client {
         return IndexResponse!(Request)(response, result);
     }
 
+    //public T get(T)(string id) {}
+    public T get(T)(string type, string id) {
+        GetRequest request = GetRequest(settings.index, type, id);
+        return this.get!(T)(request);
+    }
+
     public T get(T)(in GetRequest action) {
         alias Method = GetRequest.Method;
 

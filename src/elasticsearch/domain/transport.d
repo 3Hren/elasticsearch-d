@@ -65,7 +65,7 @@ class Transport {
         try {
             return client.perform(request);
         } catch (CurlException error) {
-            log!(Level.trace)("request failed: %s", error.msg);
+            log!(Level.warning)("request failed: %s", error.msg);
             pool.remove(client);
             return perform(request);
         }

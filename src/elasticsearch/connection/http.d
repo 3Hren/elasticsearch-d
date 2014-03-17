@@ -39,11 +39,25 @@ class HttpNodeClient : NodeClient {
     }
 
     public override ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request) {
+        alias Method = ElasticsearchMethod.get;
+
+        Appender!(string) writer = appender!(string)();    
         string url = getUrl(request);
-        log!(Level.trace)("requesting %s ...", url);
-        char[] content = std.net.curl.get(url);
-        log!(Level.trace)("request finished: %s", content);
-        return ElasticsearchResponse!(ElasticsearchMethod.get)(true, 200, address, to!string(content), request);
+
+        std.net.curl.HTTP http = std.net.curl.HTTP(url);
+        http.method = std.net.curl.HTTP.Method.get;
+
+        http.onReceive = delegate(ubyte[] data) {
+            writer.put(data);
+            return data.length;            
+        };
+
+        log!(Level.trace)("requesting [%s] %s ...", Method, url);
+        http.perform();
+        auto status = http.statusLine;
+        string content = writer.data;        
+        log!(Level.trace)("request finished: [%d] %s", status.code, content);
+        return ElasticsearchResponse!(ElasticsearchMethod.get)(status.code == 200, status.code, address, content, request);
     }
 
     public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
