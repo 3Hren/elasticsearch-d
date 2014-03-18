@@ -21,7 +21,7 @@ struct NodeUpdateSettings {
     bool onStart = true;
     bool onConnectionError = true;
     ulong interval = 60000;
-    ulong timeout = 10; 
+    ulong timeout = 10;
 }
 
 struct TransportSettings {
@@ -34,13 +34,13 @@ struct TransportSettings {
     NodeUpdateSettings nodeUpdate;
 }
 
-class Transport {   
+class Transport {
     private TransportSettings settings;
-    private ClientPool!NodeClient pool; 
+    private ClientPool!NodeClient pool;
 
     public this(TransportSettings settings = TransportSettings()) {
         AddressInfo[] infos = std.socket.getAddressInfo(settings.host, to!string(settings.port), SocketType.STREAM, ProtocolType.TCP);
-        foreach (AddressInfo info; infos) {         
+        foreach (AddressInfo info; infos) {
             addNode(info.address);
         }
 
@@ -51,14 +51,14 @@ class Transport {
     }
 
     public void addNode(Address address) {
-        log!(Level.trace)("adding node %s ...", address);       
+        log!(Level.trace)("adding node %s ...", address);
         pool.add(new HttpNodeClient(address));
     }
 
     public ElasticsearchResponse!Method perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
         log!(Level.trace)("performing %s ...", request);
         if (pool.empty()) {
-            throw new PoolIsEmptyError();           
+            throw new PoolIsEmptyError();
         }
 
         NodeClient client = pool.next();
@@ -73,10 +73,10 @@ class Transport {
 
     private void updateNodesList() {
         log!(Level.trace)("updating nodes list ...");
-        ElasticsearchRequest!(ElasticsearchMethod.get) request = ElasticsearchRequest!(ElasticsearchMethod.get)("/_nodes/_all/none");
-        ElasticsearchResponse!(ElasticsearchMethod.get) response = perform(request);        
-        NodesInfoResponse.Result result = deserializeJson!(NodesInfoResponse.Result)(response.data);        
-        
+        ElasticsearchRequest!(ElasticsearchMethod.GET) request = ElasticsearchRequest!(ElasticsearchMethod.GET)("/_nodes/_all/none");
+        ElasticsearchResponse!(ElasticsearchMethod.GET) response = perform(request);
+        NodesInfoResponse.Result result = deserializeJson!(NodesInfoResponse.Result)(response.data);
+
         log!(Level.trace)("nodes list successfully updated: %s", map!(node => node.httpAddress)(result.nodes.values));
         foreach (node; result.nodes) {
             try {

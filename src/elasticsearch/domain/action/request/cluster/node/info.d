@@ -11,7 +11,7 @@ import elasticsearch.domain.action.request.method;
 import elasticsearch.detail.string;
 
 struct NodesInfoRequest {
-    enum Method = ElasticsearchMethod.get;
+    enum Method = ElasticsearchMethod.GET;
     mixin UriBasedRequest!NodesInfoRequest;
 
     enum Type {

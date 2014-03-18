@@ -24,7 +24,7 @@ abstract class NodeClient {
     }
 
     //public abstract ElasticsearchResponse!(ElasticsearchMethod.head) perform(ElasticsearchRequest!(ElasticsearchMethod.head) request);
-    public abstract ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request);
+    public abstract ElasticsearchResponse!(ElasticsearchMethod.GET) perform(ElasticsearchRequest!(ElasticsearchMethod.GET) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request);
 
@@ -38,10 +38,10 @@ class HttpNodeClient : NodeClient {
         super(address);
     }
 
-    public override ElasticsearchResponse!(ElasticsearchMethod.get) perform(ElasticsearchRequest!(ElasticsearchMethod.get) request) {
-        alias Method = ElasticsearchMethod.get;
+    public override ElasticsearchResponse!(ElasticsearchMethod.GET) perform(ElasticsearchRequest!(ElasticsearchMethod.GET) request) {
+        alias Method = ElasticsearchMethod.GET;
 
-        Appender!(string) writer = appender!(string)();    
+        Appender!(string) writer = appender!(string)();
         string url = getUrl(request);
 
         std.net.curl.HTTP http = std.net.curl.HTTP(url);
@@ -49,24 +49,24 @@ class HttpNodeClient : NodeClient {
 
         http.onReceive = delegate(ubyte[] data) {
             writer.put(data);
-            return data.length;            
+            return data.length;
         };
 
         log!(Level.trace)("requesting [%s] %s ...", Method, url);
         http.perform();
         auto status = http.statusLine;
-        string content = writer.data;        
+        string content = writer.data;
         log!(Level.trace)("request finished: [%d] %s", status.code, content);
-        return ElasticsearchResponse!(ElasticsearchMethod.get)(status.code == 200, status.code, address, content, request);
+        return ElasticsearchResponse!(ElasticsearchMethod.GET)(status.code == 200, status.code, address, content, request);
     }
 
     public override ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request) {
         alias Method = ElasticsearchMethod.put;
 
         Appender!string writer = appender!string();
-        string url = getUrl(request); // TODO: Replace with property getter.        
+        string url = getUrl(request); // TODO: Replace with property getter.
 
-        std.net.curl.HTTP http = std.net.curl.HTTP(url);            
+        std.net.curl.HTTP http = std.net.curl.HTTP(url);
         http.method = std.net.curl.HTTP.Method.put;
         auto msg = request.data;
         http.onSend = (void[] data) {
@@ -85,11 +85,11 @@ class HttpNodeClient : NodeClient {
             writer.put(data);
             return data.length;
         };
-        
-        log!(Level.trace)("requesting [%s] %s -d %s...", Method, url, request.data);                                
+
+        log!(Level.trace)("requesting [%s] %s -d %s...", Method, url, request.data);
         http.perform();
         auto status = http.statusLine;
-        string content = writer.data;        
+        string content = writer.data;
         log!(Level.trace)("request finished: [%d] %s", status.code, content);
         return ElasticsearchResponse!(ElasticsearchMethod.put)(status.code == 200, status.code, address, content, request);
     }
