@@ -1,7 +1,7 @@
-module elasticsearch.domain.response.document.get;
+module elasticsearch.domain.action.response.document.get;
 
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.request.document.get;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.request.document.get;
 
 import vibe.data.json;
 

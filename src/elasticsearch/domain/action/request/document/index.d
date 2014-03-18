@@ -1,4 +1,4 @@
-module elasticsearch.domain.request.document.index;
+module elasticsearch.domain.action.request.document.index;
 
 import std.algorithm;
 import std.conv;
@@ -7,8 +7,8 @@ import std.uri;
 
 import vibe.inet.path;
 
-import elasticsearch.domain.request.base;
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.request.method;
 
 mixin template BaseIndexRequest(ElasticsearchMethod M) {
     enum Method = M;

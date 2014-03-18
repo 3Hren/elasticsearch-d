@@ -1,9 +1,9 @@
-module elasticsearch.domain.response.cluster.node.stats;
+module elasticsearch.domain.action.response.cluster.node.stats;
 
 import vibe.data.json;
 
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.request.cluster.node.stats;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.request.cluster.node.stats;
 
 struct NodeStats {
 }

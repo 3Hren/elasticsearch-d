@@ -1,4 +1,4 @@
-module elasticsearch.domain.request.method;
+module elasticsearch.domain.action.request.method;
 
 enum ElasticsearchMethod {
     head,

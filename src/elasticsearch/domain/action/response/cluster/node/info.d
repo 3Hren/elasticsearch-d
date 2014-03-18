@@ -1,11 +1,11 @@
-module elasticsearch.domain.response.cluster.node.info;
+module elasticsearch.domain.action.response.cluster.node.info;
 
 import std.variant;
 
 import vibe.data.json : Name = name, Optional = optional, Json;
 
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.request.cluster.node.info;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.request.cluster.node.info;
 
 struct NodeInfoOSCPU {
     @Name("vendor")

@@ -1,7 +1,7 @@
 module elasticsearch.exception;
 
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.request.method;
 
 class ElasticsearchError(ElasticsearchMethod Method) : Error {
     ElasticsearchResponse!Method response;

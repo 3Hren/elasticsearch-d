@@ -1,7 +1,7 @@
-module elasticsearch.domain.response.base;
+module elasticsearch.domain.action.response.base;
 
-import elasticsearch.domain.request.method;
-import elasticsearch.domain.request.base;
+import elasticsearch.domain.action.request.method;
+import elasticsearch.domain.action.request.base;
 
 struct ElasticsearchResponse(ElasticsearchMethod Method) {
     bool success;   

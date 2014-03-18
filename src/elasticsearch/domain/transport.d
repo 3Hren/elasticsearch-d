@@ -12,10 +12,10 @@ import elasticsearch.connection.http;
 import elasticsearch.connection.pool;
 import elasticsearch.exception;
 import elasticsearch.detail.log;
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.response.cluster.node.info;
-import elasticsearch.domain.request.base;
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.response.cluster.node.info;
+import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.request.method;
 
 struct NodeUpdateSettings {
     bool onStart = true;

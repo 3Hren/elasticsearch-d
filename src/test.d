@@ -6,26 +6,27 @@ import vibe.data.json;
 
 import elasticsearch.client;
 import elasticsearch.detail.log;
-import elasticsearch.domain.request.cluster.node.info;
-import elasticsearch.domain.request.document.get;
-import elasticsearch.domain.request.document.index;
-import elasticsearch.domain.response.cluster.node.info;
-import elasticsearch.domain.response.document.index;
+import elasticsearch.domain.action.request.cluster.node.info;
+import elasticsearch.domain.action.request.document.get;
+import elasticsearch.domain.action.request.document.index;
+import elasticsearch.domain.action.request.search.search;
+import elasticsearch.domain.action.response.cluster.node.info;
+import elasticsearch.domain.action.response.document.index;
 import elasticsearch.exception;
 
 void main() {}
 
 version (FunctionalTesting) {
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with specifying just index, type and id ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");
     IndexResponse!ManualIndexRequest response = client.index("twitter", "tweet", "1", tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
@@ -37,15 +38,15 @@ unittest {
     assert("1" == result.id);
 }
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with specifying just index and type ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id specifying!");
     IndexResponse!AutomaticIndexRequest response = client.index("twitter", "tweet", tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
@@ -54,17 +55,17 @@ unittest {
 
     assert("twitter" == result.index);
     assert("tweet" == result.type);
-}   
+}
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with specifying just index ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id and type specifying!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch without id and type specifying!");
     IndexResponse!AutomaticIndexRequest response = client.index("twitter", tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
@@ -75,11 +76,11 @@ unittest {
     assert("tweets" == result.type);
 }
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with specifying, emmm, nothing. Using default index ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client(ClientSettings("twitter"));
@@ -92,35 +93,35 @@ unittest {
 
     assert("twitter" == result.index);
     assert("tweets" == result.type);
-} 
+}
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with full parameters set ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
-    ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");    
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
+    ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");
     IndexResponse!ManualIndexRequest response = client.index(request, tweet);
 
     log!(Level.info)("'IndexRequest' finished: %s\n", response);
 }
 
-unittest {    
+unittest {
     log!(Level.info)("Performing 'IndexRequest' with full parameters set with version ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
     ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");
     request.version_ = 1;
 
-    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");    
+    Tweet tweet = Tweet("Wow, I'm using elasticsearch!");
     try {
         IndexResponse!ManualIndexRequest response = client.index(request, tweet);
         assert(false);
@@ -128,7 +129,7 @@ unittest {
         assert(err.response.code == 409);
     } finally {
         log!(Level.info)("'IndexRequest' finished\n");
-    }    
+    }
 }
 
 unittest {
@@ -235,7 +236,7 @@ unittest {
     log!(Level.info)("Performing 'GetRequest' ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
@@ -249,7 +250,7 @@ unittest {
     log!(Level.info)("Performing 'GetRequest' with automatic index detecting ...");
 
     struct Tweet {
-        string message; 
+        string message;
     }
 
     Client client = new Client();
@@ -302,13 +303,13 @@ class Term : Query {
             o[name].value = value;
 
             if (boost != -1) {
-                o[name].boost = boost;                
+                o[name].boost = boost;
             }
 
             if (queryName.length != 0) {
                 o[name]._name = queryName;
             }
-        }        
+        }
     }
 }
 
@@ -323,7 +324,7 @@ class MatchQuery {
 
     public this(string name, string text) {
         this.name = name;
-        this.text = text;        
+        this.text = text;
     }
 
     public MatchQuery setType(Type type) {
@@ -366,13 +367,14 @@ unittest {
     log!(Level.info)("%s", object);
 }
 
-//unittest {
-//    log!(Level.info)("Performing 'SearchRequest' with match all ...");
+unittest {
+    log!(Level.info)("Performing 'SearchRequest' with match all ...");
 
-//    SearchRequest request = SearchRequest("twitter");    
-//    auto response = client.search(request);
+    Client client = new Client();
+    SearchRequest request = SearchRequest("twitter");
+    auto response = client.search(request);
 
-//    log!(Level.info)("'SearchRequest' finished: %s\n", response);
-//}
+    log!(Level.info)("'SearchRequest' finished: %s\n", response);
+}
 
 }

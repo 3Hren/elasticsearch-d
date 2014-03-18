@@ -8,9 +8,9 @@ import std.stdio;
 
 import elasticsearch.exception;
 import elasticsearch.detail.log;
-import elasticsearch.domain.request.method;
-import elasticsearch.domain.request.base;
-import elasticsearch.domain.response.base;
+import elasticsearch.domain.action.request.method;
+import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.response.base;
 
 abstract class NodeClient {
     private string address;

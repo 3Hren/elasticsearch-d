@@ -8,17 +8,17 @@ import vibe.data.json;
 import elasticsearch.exception;
 import elasticsearch.detail.inflect;
 import elasticsearch.detail.log;
-import elasticsearch.domain.response.base;
-import elasticsearch.domain.response.cluster.node.info;
-import elasticsearch.domain.response.document.get;
-import elasticsearch.domain.response.document.index;
-//import elasticsearch.domain.response.search.search;
-import elasticsearch.domain.request.base;
-import elasticsearch.domain.request.method;
-import elasticsearch.domain.request.cluster.node.info;
-import elasticsearch.domain.request.document.get;
-import elasticsearch.domain.request.document.index;
-import elasticsearch.domain.request.search.search;
+import elasticsearch.domain.action.response.base;
+import elasticsearch.domain.action.response.cluster.node.info;
+import elasticsearch.domain.action.response.document.get;
+import elasticsearch.domain.action.response.document.index;
+//import elasticsearch.domain.action.response.search.search;
+import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.request.method;
+import elasticsearch.domain.action.request.cluster.node.info;
+import elasticsearch.domain.action.request.document.get;
+import elasticsearch.domain.action.request.document.index;
+import elasticsearch.domain.action.request.search.search;
 import elasticsearch.domain.transport;
 
 struct ClientSettings {
@@ -43,7 +43,7 @@ class Client {
     }
 
     public IndexResponse!(AutomaticIndexRequest) index(T)(string index, string type, T post) {
-        return this.index(AutomaticIndexRequest(index, type), post);        
+        return this.index(AutomaticIndexRequest(index, type), post);
     }
 
     public IndexResponse!(AutomaticIndexRequest) index(T)(string index, T post) {
@@ -72,14 +72,14 @@ class Client {
     public T get(T)(in GetRequest action) {
         alias Method = GetRequest.Method;
 
-        auto request = ElasticsearchRequest!(Method)(action.uri);        
+        auto request = ElasticsearchRequest!(Method)(action.uri);
         auto response = perform(request);
 
         if (response.code != 200) {
             if (response.code == 404) {
-                throw new ElasticsearchError!(Method)("document not found", response); 
+                throw new ElasticsearchError!(Method)("document not found", response);
             } else {
-                throw new ElasticsearchError!(Method)("document can't be extracted", response); 
+                throw new ElasticsearchError!(Method)("document can't be extracted", response);
             }
         }
 

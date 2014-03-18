@@ -1,6 +1,6 @@
-module elasticsearch.domain.request.base;
+module elasticsearch.domain.action.request.base;
 
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.request.method;
 
 struct ElasticsearchRequest(ElasticsearchMethod Method) {
     string uri;
@@ -13,6 +13,8 @@ struct ElasticsearchRequest(ElasticsearchMethod Method) {
 mixin template UriBasedRequest() {
     private string path;
     private string[string] parameters;
+
+    public this() @disable;
 
     public string uri() @property const {
         if (parameters.length == 0) {

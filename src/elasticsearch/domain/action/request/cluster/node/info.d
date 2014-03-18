@@ -1,4 +1,4 @@
-module elasticsearch.domain.request.cluster.node.info;
+module elasticsearch.domain.action.request.cluster.node.info;
 
 import std.algorithm;
 import std.array;
@@ -6,7 +6,7 @@ import std.conv;
 import std.stdio;
 import std.traits;
 
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.request.method;
 import elasticsearch.detail.string;
 
 struct NodesInfoRequest {
@@ -25,7 +25,7 @@ struct NodesInfoRequest {
         plugins     = 1 << 9,
         all = settings | os | process | jvm | threadPool | network | transport | http | plugins
     }
-    
+
     private string[] nodes;
     private Type type = Type.all;
 
@@ -46,7 +46,7 @@ struct NodesInfoRequest {
         if (nodes.empty) {
             return "/_nodes/_all/" ~ typeToString(type);
         }
-                
+
         return "/_nodes/" ~ to!string(joiner([to!string(joiner(nodes, ",")), typeToString(type)], "/"));
     }
 
@@ -67,8 +67,8 @@ struct NodesInfoRequest {
                 }
                 writer.put(to!string(flag).underscored);
             }
-        }     
-        
+        }
+
         return writer.data;
     }
 }
@@ -78,7 +78,7 @@ unittest {
 }
 
 unittest {
-    assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).uri);    
+    assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).uri);
     assert("/_nodes/_all/settings" == NodesInfoRequest(NodesInfoRequest.Type.settings).uri);
     assert("/_nodes/_all/os" == NodesInfoRequest(NodesInfoRequest.Type.os).uri);
     assert("/_nodes/_all/process" == NodesInfoRequest(NodesInfoRequest.Type.process).uri);
@@ -97,5 +97,5 @@ unittest {
     assert("/_nodes/node1/" == NodesInfoRequest("node1").uri);
     assert("/_nodes/node1/none" == NodesInfoRequest("node1", NodesInfoRequest.Type.none).uri);
     assert("/_nodes/node1,node2/" == NodesInfoRequest(["node1", "node2"]).uri);
-    assert("/_nodes/node1,node2/none" == NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).uri);    
+    assert("/_nodes/node1,node2/none" == NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).uri);
 }

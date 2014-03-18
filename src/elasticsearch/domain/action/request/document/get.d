@@ -1,12 +1,12 @@
-module elasticsearch.domain.request.document.get;
+module elasticsearch.domain.action.request.document.get;
 
 import std.algorithm;
 import std.conv;
 
 import vibe.inet.path;
 
-import elasticsearch.domain.request.base;
-import elasticsearch.domain.request.method;
+import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.request.method;
 
 struct GetRequest {
     enum Method = ElasticsearchMethod.get;
