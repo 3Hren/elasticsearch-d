@@ -12,11 +12,13 @@ import elasticsearch.domain.response.base;
 import elasticsearch.domain.response.cluster.node.info;
 import elasticsearch.domain.response.document.get;
 import elasticsearch.domain.response.document.index;
+//import elasticsearch.domain.response.search.search;
 import elasticsearch.domain.request.base;
 import elasticsearch.domain.request.method;
 import elasticsearch.domain.request.cluster.node.info;
 import elasticsearch.domain.request.document.get;
 import elasticsearch.domain.request.document.index;
+import elasticsearch.domain.request.search.search;
 import elasticsearch.domain.transport;
 
 struct ClientSettings {
@@ -83,6 +85,11 @@ class Client {
 
         auto result = deserializeJson!(GetResponse!(T).Result)(response.data);
         return result.source;
+    }
+
+    public Json search(in SearchRequest request) {
+        Json json;
+        return json;
     }
 
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {

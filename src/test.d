@@ -366,4 +366,13 @@ unittest {
     log!(Level.info)("%s", object);
 }
 
+//unittest {
+//    log!(Level.info)("Performing 'SearchRequest' with match all ...");
+
+//    SearchRequest request = SearchRequest("twitter");    
+//    auto response = client.search(request);
+
+//    log!(Level.info)("'SearchRequest' finished: %s\n", response);
+//}
+
 }
