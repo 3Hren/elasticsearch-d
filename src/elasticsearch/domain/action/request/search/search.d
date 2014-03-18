@@ -14,7 +14,7 @@ struct SearchRequest {
     }
 }
 
-//! ========== UNIT TESTS ==========
+//! ==================== UNIT TESTS ====================
 
 class AssertError : Exception {
     this(string reason) {

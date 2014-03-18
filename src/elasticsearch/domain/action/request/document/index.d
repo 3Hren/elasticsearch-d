@@ -91,6 +91,8 @@ struct AutomaticIndexRequest {
     }
 }
 
+//! ==================== UNIT TESTS ====================
+
 unittest {
     auto request = ManualIndexRequest("index", "type", "id");
     request.setDocumentVersion(1);

@@ -9,7 +9,7 @@ string underscored(in string s) nothrow {
     enum AllCapRX = ctRegex!(`([a-z\d])([A-Z])`);
 
     try {
-        return replaceAll(replaceAll(replaceAll(s, PrepareRE, "/"), FirstCapRX, "$1_$2"), AllCapRX, "$1_$2").tr("-", "_").toLower();    
+        return replaceAll(replaceAll(replaceAll(s, PrepareRE, "/"), FirstCapRX, "$1_$2"), AllCapRX, "$1_$2").tr("-", "_").toLower();
     } catch (Exception) {
         return s;
     }
@@ -33,5 +33,5 @@ unittest {
     assert("html5_editor" == "HTML5Editor".underscored);
     assert("editor_toc" == "editorTOC".underscored);
     assert("editor_toc" == "EditorTOC".underscored);
-    assert("editor42_toc" == "Editor42TOC".underscored);    
+    assert("editor42_toc" == "Editor42TOC".underscored);
 }

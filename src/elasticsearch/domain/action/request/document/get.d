@@ -29,6 +29,8 @@ struct GetRequest {
     }
 }
 
+//! ==================== UNIT TESTS ====================
+
 unittest {
     assert("/twitter/tweet/1" == GetRequest("twitter", "tweet", "1").uri);
 }

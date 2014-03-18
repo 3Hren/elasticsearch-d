@@ -6,11 +6,13 @@ import std.conv;
 import std.stdio;
 import std.traits;
 
+import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
 import elasticsearch.detail.string;
 
 struct NodesInfoRequest {
     enum Method = ElasticsearchMethod.get;
+    mixin UriBasedRequest!NodesInfoRequest;
 
     enum Type {
         none        = 1 << 0,
@@ -26,7 +28,7 @@ struct NodesInfoRequest {
         all = settings | os | process | jvm | threadPool | network | transport | http | plugins
     }
 
-    private string[] nodes;
+    private string nodes;
     private Type type = Type.all;
 
     public this(Type type) {
@@ -37,17 +39,17 @@ struct NodesInfoRequest {
         this([node], type);
     }
 
-    public this(in string[] nodes, Type type = Type.all) {
-        this.nodes = nodes.dup;
+    public this(string[] nodes, Type type = Type.all) {
+        this.nodes = to!string(nodes.join(","));
         this.type = type;
     }
 
-    public string uri() @property {
+    private void buildUri(UriBuilder builder) const {
         if (nodes.empty) {
-            return "/_nodes/_all/" ~ typeToString(type);
+            builder.setPath("_nodes", "_all", typeToString(type));
+        } else {
+            builder.setPath("_nodes", nodes, typeToString(type));
         }
-
-        return "/_nodes/" ~ to!string(joiner([to!string(joiner(nodes, ",")), typeToString(type)], "/"));
     }
 
     private static string typeToString(Type type) {
@@ -72,6 +74,8 @@ struct NodesInfoRequest {
         return writer.data;
     }
 }
+
+//! ==================== UNIT TESTS ====================
 
 unittest {
     assert("/_nodes/_all/" == NodesInfoRequest().uri);
