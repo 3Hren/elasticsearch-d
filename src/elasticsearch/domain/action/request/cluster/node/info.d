@@ -1,6 +1,5 @@
 module elasticsearch.domain.action.request.cluster.node.info;
 
-import std.algorithm;
 import std.array;
 import std.conv;
 import std.stdio;
@@ -40,7 +39,7 @@ struct NodesInfoRequest {
     }
 
     public this(string[] nodes, Type type = Type.all) {
-        this.nodes = to!string(nodes.join(","));
+        this.nodes = to!string(Strings.join(nodes));
         this.type = type;
     }
 

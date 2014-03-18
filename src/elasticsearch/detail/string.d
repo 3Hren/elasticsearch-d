@@ -15,6 +15,24 @@ string underscored(in string s) nothrow {
     }
 }
 
+struct Strings {
+    static string join(const string[] array, string separator = ",") {
+        if (array.length == 0) {
+            return "";
+        }
+
+        string result;
+        for (ulong i = 0; i < array.length - 1; i++) {
+            if (array[i].length != 0) {
+                result ~= array[i] ~ separator;
+            }
+        }
+
+        result ~= array[$ - 1];
+        return result;
+    }
+}
+
 unittest {
     assert("" == "".underscored);
     assert("camel" == "camel".underscored);

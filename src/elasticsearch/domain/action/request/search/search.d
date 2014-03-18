@@ -6,38 +6,30 @@ import std.conv;
 
 import vibe.inet.path;
 
+import elasticsearch.detail.string;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
-
-string join(const string[] array, string separator = ",") {
-    if (array.length == 0) {
-        return "";
-    }
-
-    string result;
-    for (ulong i = 0; i < array.length - 1; i++) {
-        result ~= array[i] ~ separator;
-    }
-
-    result ~= array[$ - 1];
-    return result;
-}
 
 struct SearchRequest {
     enum Method = ElasticsearchMethod.GET;
     mixin UriBasedRequest!SearchRequest;
 
-    private string[] indices;
+    private const string[] indices;
+    private string[] types;
 
-    public this(string[] indices...) {
+    public this(const string[] indices...) {
         this.indices = indices.dup;
+    }
+
+    public void setType(string type) {
+        this.types = [type.dup];
     }
 
     private void buildUri(UriBuilder builder) const {
         if (indices.length == 0) {
-            builder.setPath("_all", "_search");
+            builder.setPath("_all", Strings.join(types), "_search");
         } else {
-            builder.setPath(join(indices), "_search");
+            builder.setPath(Strings.join(indices), Strings.join(types), "_search");
         }
     }
 }
@@ -79,4 +71,11 @@ unittest {
     // Multiple index constructor properly maps into uri.
     SearchRequest request = SearchRequest("twitter", "city");
     Assert.equals("/twitter,city/_search", request.uri);
+}
+
+unittest {
+    // Accepts type field.
+    SearchRequest request = SearchRequest("twitter");
+    request.setType("tweet");
+    Assert.equals("/twitter/tweet/_search", request.uri);
 }

@@ -6,6 +6,7 @@ import std.typecons;
 
 import vibe.inet.path;
 
+import elasticsearch.detail.string;
 import elasticsearch.domain.action.request.method;
 
 struct ElasticsearchRequest(ElasticsearchMethod Method) {
@@ -21,23 +22,11 @@ class UriBuilder {
     private string[string] parameters;
 
     public void setPath(string path) {
-        this.path = path;
-    }
-
-    public void setPath(Path path) {
-        setPath(path.toString);
-    }
-
-    public void setPath(immutable(PathEntry)[] entries) {
-        setPath(Path(entries, true));
+        this.path = "/" ~ path;
     }
 
     public void setPath(string[] entries...) {
-        immutable(PathEntry)[] e;
-        foreach (entry; entries) {
-            e ~= PathEntry(entry);
-        }
-        setPath(e);
+        setPath(Strings.join(entries, "/"));
     }
 
     public void addParameter(string name, string value) {
@@ -66,7 +55,7 @@ class UriBuilder {
             queries ~= name ~ "=" ~ value;
         }
 
-        return path ~ "?" ~ to!string(joiner(queries, "&"));
+        return path ~ "?" ~ Strings.join(queries, "&");
     }
 }
 
