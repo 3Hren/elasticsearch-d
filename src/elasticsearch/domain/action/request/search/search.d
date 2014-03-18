@@ -9,15 +9,14 @@ import vibe.inet.path;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
 
-string join(const string[] array) {
+string join(const string[] array, string separator = ",") {
     if (array.length == 0) {
         return "";
     }
 
     string result;
     for (ulong i = 0; i < array.length - 1; i++) {
-        result ~= array[i];
-        result ~= ",";
+        result ~= array[i] ~ separator;
     }
 
     result ~= array[$ - 1];
