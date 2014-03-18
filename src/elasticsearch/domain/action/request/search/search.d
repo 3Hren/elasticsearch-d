@@ -11,6 +11,7 @@ struct SearchRequest {
     mixin UriBasedRequest!SearchRequest;
 
     private void buildUri(UriBuilder builder) const {
+        builder.setPath("_all", "_search");
     }
 }
 
@@ -32,6 +33,6 @@ struct Assert {
 
 unittest {
     // Will search all indices by default;
-//    SearchRequest request = SearchRequest();
-//    Assert.equals("/_all/_search", request.uri);
+    SearchRequest request = SearchRequest();
+    Assert.equals("/_all/_search", request.uri);
 }
