@@ -1,4 +1,8 @@
 import std.stdio;
+import std.typecons;
+import std.variant;
+
+import vibe.data.json;
 
 import elasticsearch.client;
 import elasticsearch.detail.log;
@@ -255,6 +259,111 @@ unittest {
     } catch (Error err) {
         log!(Level.info)("'GetRequest' finished: %s\n", err.msg);
     }
+}
+
+template isNullable(T) {
+    const isNullable = __traits(compiles, (T t){
+        t.isNull();
+        t.nullify();
+        t.get;
+    });
+}
+
+class Query {
+    public abstract void build(ref Json o);
+}
+
+class Term : Query {
+    private const string name;
+    private Json value;
+    private float boost = -1;
+    private string queryName;
+
+    public this(T)(string name, T value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public Term setBoost(float boost) {
+        this.boost = boost;
+        return this;
+    }
+
+    public Term setQueryName(string queryName) {
+        this.queryName = queryName;
+        return this;
+    }
+
+    public override void build(ref Json o) {
+        if (boost == -1 && queryName.length == 0) {
+            o[name] = value;
+        } else {
+            o[name] = Json.emptyObject;
+            o[name].value = value;
+
+            if (boost != -1) {
+                o[name].boost = boost;                
+            }
+
+            if (queryName.length != 0) {
+                o[name]._name = queryName;
+            }
+        }        
+    }
+}
+
+class MatchQuery {
+    enum Type {
+        BOOLEAN
+    }
+
+    private const string name;
+    private const string text;
+    private Nullable!Type type;
+
+    public this(string name, string text) {
+        this.name = name;
+        this.text = text;        
+    }
+
+    public MatchQuery setType(Type type) {
+        this.type = type;
+        return this;
+    }
+
+    public void build(ref Json o) {
+        o.match = Json.emptyObject;
+        o.match.name = Json.emptyObject;
+        o.match.name.query = text;
+        setField(o.match.name, "type", type);
+    }
+
+    private void setField(T)(ref Json o, string name, Nullable!T value) {
+        if (!value.isNull) {
+            setField(o, name, value.get);
+        }
+    }
+
+    private void setField(T)(ref Json o, string name, T value) if (!isNullable!(T)) {
+        o[name] = to!string(value);
+    }
+}
+
+unittest {
+    Json object = Json.emptyObject;
+    auto query = new MatchQuery("message", "Wow!")
+        .setType(MatchQuery.Type.BOOLEAN);
+    query.build(object);
+    log!(Level.info)("%s", object);
+}
+
+unittest {
+    Json object = Json.emptyObject;
+    auto q = new Term("field", 42)
+        .setBoost(2)
+        .setQueryName("blah");
+    q.build(object);
+    log!(Level.info)("%s", object);
 }
 
 }
