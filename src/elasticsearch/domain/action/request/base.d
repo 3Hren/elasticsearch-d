@@ -37,7 +37,7 @@ class UriBuilder {
         parameters[name] = std.uri.encodeComponent(value);
     }
 
-    public void addParameter(string name, Nullable!ulong value) {
+    public void addParameter(T)(string name, Nullable!T value) {
         if (value.isNull) {
             return;
         }
