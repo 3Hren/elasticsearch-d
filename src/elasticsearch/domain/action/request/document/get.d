@@ -10,12 +10,22 @@ import elasticsearch.domain.action.request.method;
 
 struct GetRequest {
     enum Method = ElasticsearchMethod.get;
-    mixin UriBasedRequest;
+    mixin UriBasedRequest!GetRequest;
+
+    private string index;
+    private string type;
+    private string id;
 
     public this() @disable;
 
     public this(string index, string type, string id) {
-        setPath(index, type, id);
+        this.index = index;
+        this.type = type;
+        this.id = id;
+    }
+
+    private void buildUri(UriBuilder builder) const {
+        builder.setPath(index, type, id);
     }
 }
 

@@ -119,7 +119,7 @@ unittest {
 
     Client client = new Client();
     ManualIndexRequest request = ManualIndexRequest("twitter", "tweet", "1");
-    request.version_ = 1;
+    request.setDocumentVersion(1);
 
     Tweet tweet = Tweet("Wow, I'm using elasticsearch!");
     try {
@@ -367,14 +367,14 @@ unittest {
     log!(Level.info)("%s", object);
 }
 
-unittest {
-    log!(Level.info)("Performing 'SearchRequest' with match all ...");
+//unittest {
+//    log!(Level.info)("Performing 'SearchRequest' with match all ...");
 
-    Client client = new Client();
-    SearchRequest request = SearchRequest("twitter");
-    auto response = client.search(request);
+//    Client client = new Client();
+//    SearchRequest request = SearchRequest("twitter");
+//    auto response = client.search(request);
 
-    log!(Level.info)("'SearchRequest' finished: %s\n", response);
-}
+//    log!(Level.info)("'SearchRequest' finished: %s\n", response);
+//}
 
 }
