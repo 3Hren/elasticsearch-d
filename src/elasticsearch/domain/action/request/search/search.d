@@ -3,9 +3,7 @@ module elasticsearch.domain.action.request.search.search;
 import std.array;
 import std.algorithm;
 import std.conv;
-import std.datetime;
 import std.string;
-import std.stdio;
 
 import vibe.inet.path;
 
@@ -13,6 +11,7 @@ import elasticsearch.detail.string;
 import elasticsearch.detail.log;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
+import elasticsearch.testing;
 
 enum SearchType {
     DFS_QUERY_THEN_FETCH = 0,
@@ -72,67 +71,6 @@ struct SearchRequest {
 }
 
 //! ==================== UNIT TESTS ====================
-
-class AssertError : Exception {
-    this(string reason) {
-        super(reason);
-    }
-}
-
-struct Assert {
-    static void equals(T)(T expected, T actual) {
-        if (expected != actual) {
-            throw new AssertError(`assertion failed - expected: "` ~ to!string(expected) ~ `", actual: "` ~ to!string(actual) ~ `"`);
-        }
-    }
-}
-
-struct Test {
-    string name;
-}
-
-interface TestCase {
-    public void run();
-}
-
-template Tuple(T...) {
-    alias Tuple = T;
-}
-
-class BaseTestCase(T) : TestCase {
-    enum Color {
-        RED,
-        GREEN
-    }
-
-    public override void run() {
-        alias tests = Tuple!(__traits(getUnitTests, T));
-        StopWatch sw;
-        ulong last = 0;
-
-        writefln("%s %d tests from '%s'", colored("[----------]", Color.GREEN), tests.length, T.stringof);
-        foreach (test; tests) {
-            alias attributes = Tuple!(__traits(getAttributes, test));
-            static assert(attributes.length == 1);
-
-            string name = attributes[0].name;
-            try {
-                writefln("%s %s '%s' ...", colored("[ RUN      ]", Color.GREEN), T.stringof, name);
-                sw.start();
-                test();
-                sw.stop();
-                writefln("%s %s '%s' (%d us)", colored("[       OK ]", Color.GREEN), T.stringof, name, sw.peek.usecs - last);
-                last = sw.peek.usecs;
-            } catch (Exception err) {
-                writefln("%s %s '%s' - %s", colored("[     FAIL ]", Color.RED), T.stringof, name, err.msg);
-            }
-        }
-    }
-
-    private string colored(string text, Color color) {
-        return "\033[1;" ~ to!string(31 + to!int(color)) ~ "m" ~ text ~ "\033[0m";
-    }
-}
 
 class SearchRequestTestCase : BaseTestCase!SearchRequestTestCase {
     @Test("Will search all indices by default")

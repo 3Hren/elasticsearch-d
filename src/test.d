@@ -13,16 +13,9 @@ import elasticsearch.domain.action.request.search.search;
 import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.response.document.index;
 import elasticsearch.exception;
+import elasticsearch.testing;
 
-void main() {
-    TestCase[] testCases = [
-        new SearchRequestTestCase()
-    ];
-
-    foreach (testCase; testCases) {
-        testCase.run();
-    }
-}
+void main() {}
 
 version (FunctionalTesting) {
 
