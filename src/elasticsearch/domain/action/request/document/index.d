@@ -10,6 +10,7 @@ import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
+import elasticsearch.testing;
 
 mixin template BaseIndexRequest(ElasticsearchMethod method) {
     enum Method = method;
@@ -93,50 +94,60 @@ struct AutomaticIndexRequest {
 
 //! ==================== UNIT TESTS ====================
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setDocumentVersion(1);
-    assert("/index/type/id?version=1" == request.uri);
-}
+class IndexRequestTestCase : BaseTestCase!IndexRequestTestCase {
+    @Test("Allows to specify document version")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setDocumentVersion(1);
+        assert("/index/type/id?version=1" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setCreateMode();
-    assert("/index/type/id?op_type=create" == request.uri);
-}
+    @Test("Allows to specify creation operation")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setCreateMode();
+        assert("/index/type/id?op_type=create" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setRouting("kimchi");
-    assert("/index/type/id?routing=kimchi" == request.uri);
-}
+    @Test("Allows to specify routing")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setRouting("kimchi");
+        assert("/index/type/id?routing=kimchi" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setParent("1111");
-    assert("/index/type/id?parent=1111" == request.uri);
-}
+    @Test("Allows to specify parent")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setParent("1111");
+        assert("/index/type/id?parent=1111" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setTimestamp("2009-11-15T14:12:12");
-    assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
-}
+    @Test("Allows to specify timestamp as string")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setTimestamp("2009-11-15T14:12:12");
+        assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setTimestamp(DateTime(2009, 11, 15, 14, 12, 12));
-    assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
-}
+    @Test("Allows to specify timestamp as DateTime object")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setTimestamp(DateTime(2009, 11, 15, 14, 12, 12));
+        assert("/index/type/id?timestamp=2009-11-15T14%3A12%3A12" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setTimeToLive("86400000");
-    assert("/index/type/id?ttl=86400000" == request.uri);
-}
+    @Test("Allows to specify ttl")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setTimeToLive("86400000");
+        assert("/index/type/id?ttl=86400000" == request.uri);
+    }
 
-unittest {
-    auto request = ManualIndexRequest("index", "type", "id");
-    request.setTimeout("5m");
-    assert("/index/type/id?timeout=5m" == request.uri);
+    @Test("Allows to specify timeout")
+    unittest {
+        auto request = ManualIndexRequest("index", "type", "id");
+        request.setTimeout("5m");
+        assert("/index/type/id?timeout=5m" == request.uri);
+    }
 }

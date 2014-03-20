@@ -7,6 +7,7 @@ import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
+import elasticsearch.testing;
 
 struct GetRequest {
     enum Method = ElasticsearchMethod.GET;
@@ -31,6 +32,9 @@ struct GetRequest {
 
 //! ==================== UNIT TESTS ====================
 
-unittest {
-    assert("/twitter/tweet/1" == GetRequest("twitter", "tweet", "1").uri);
+class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
+    @Test("Uri")
+    unittest {
+        assert("/twitter/tweet/1" == GetRequest("twitter", "tweet", "1").uri);
+    }
 }

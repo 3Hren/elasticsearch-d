@@ -78,7 +78,9 @@ class BaseTestCase(T) : TestCase {
         caseWatch.start();
         foreach (test; tests) {
             alias attributes = Tuple!(__traits(getAttributes, test));
-            static assert(attributes.length > 0 && staticIndexOf!(Test, typeof(attributes)) != -1,
+            static assert(attributes.length > 0,
+                          "your tests must be marked with '@Test' attribute for readability");
+            static assert(staticIndexOf!(Test, typeof(attributes)) != -1,
                           "your tests must be marked with '@Test' attribute for readability");
 
             string name = attributes[0].name;

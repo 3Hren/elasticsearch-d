@@ -2,6 +2,8 @@ module elasticsearch.detail.inflect;
 
 import std.string;
 
+import elasticsearch.testing;
+
 struct ReplacementRule {
     std.regex.Regex!char rx;
     string replacement;
@@ -16,7 +18,7 @@ struct ReplacementRule {
 }
 
 struct Pluralizer {
-    private static string[string] cache; 
+    private static string[string] cache;
     private static ReplacementRule[] rules;
 
     static this() {
@@ -35,8 +37,8 @@ struct Pluralizer {
     private static string apply(in string word) {
         string result = word;
 
-        foreach (rule; rules.reverse) {   
-            result = rule.apply(word);         
+        foreach (rule; rules.reverse) {
+            result = rule.apply(word);
             if (result != word) {
                 return result;
             }
@@ -46,6 +48,9 @@ struct Pluralizer {
     }
 }
 
-unittest {
-    assert("types", Pluralizer.make("type"));    
+class PluralizerTestCase : BaseTestCase!PluralizerTestCase {
+    @Test("Base suffix")
+    unittest {
+        assert("types", Pluralizer.make("type"));
+    }
 }
