@@ -74,7 +74,7 @@ mixin template BaseIndexRequest(ElasticsearchMethod method) {
 }
 
 struct ManualIndexRequest {
-    mixin BaseIndexRequest!(ElasticsearchMethod.put);
+    mixin BaseIndexRequest!(ElasticsearchMethod.PUT);
 
     public this(string index, string type, string id) {
         this.index = index;

@@ -1,7 +1,9 @@
+import core.runtime;
 import std.stdio;
 import std.typecons;
 import std.variant;
 
+import vibe.core.core;
 import vibe.data.json;
 
 import elasticsearch.client;
@@ -14,6 +16,12 @@ import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.response.document.index;
 import elasticsearch.exception;
 import elasticsearch.testing;
+
+shared static this() {
+//    Runtime.moduleUnitTester = {
+//        return TestRunner.run();
+//    };
+}
 
 void main() {}
 
@@ -376,6 +384,19 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
         auto response = client.search(request);
 
         log!(Level.info)("'SearchRequest' finished: %s", response);
+    }
+
+    @Test("Async SearchRequest with match all")
+    unittest {
+        Client client = new Client();
+        SearchRequest request = SearchRequest("twitter");
+        runTask({
+            auto response = client.search(request);
+            log!(Level.info)("'SearchRequest' finished: %s", response);
+            exitEventLoop();
+        });
+
+        runEventLoop();
     }
 }
 

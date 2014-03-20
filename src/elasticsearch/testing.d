@@ -1,6 +1,5 @@
 module elasticsearch.testing;
 
-import core.runtime;
 import std.conv;
 import std.datetime;
 import std.stdio;
@@ -147,10 +146,4 @@ struct TestRunner {
 
         return failed == 0;
     }
-}
-
-shared static this() {
-    Runtime.moduleUnitTester = {
-        return TestRunner.run();
-    };
 }

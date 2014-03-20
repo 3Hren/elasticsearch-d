@@ -89,7 +89,7 @@ class Transport {
         }
     }
 
-    private Address parseAddress(in string address) {
+    private Address parseAddress(in string address) const {
         enum RX = ctRegex!(`^inet\[(?P<domain>.*)/(?P<ip>.+):(?P<port>\d+)\]$`); // inet[/127.0.0.1:9200]
 
         auto captures = matchFirst(address, RX);

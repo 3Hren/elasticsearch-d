@@ -12,7 +12,6 @@ import elasticsearch.domain.action.response.base;
 import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.response.document.get;
 import elasticsearch.domain.action.response.document.index;
-//import elasticsearch.domain.action.response.search.search;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
 import elasticsearch.domain.action.request.cluster.node.info;
@@ -107,7 +106,7 @@ class Client {
 
     private ElasticsearchResponse!(Method) perform(ElasticsearchMethod Method)(ElasticsearchRequest!(Method) request) {
         ElasticsearchResponse!(Method) response = transport.perform(request);
-        if (response.code != 200) {
+        if (!response.success) {
             Json result = deserializeJson!(Json)(response.data);
             auto reason = to!string(result["error"]);
             throw new ElasticsearchError!(Method)(reason, response);

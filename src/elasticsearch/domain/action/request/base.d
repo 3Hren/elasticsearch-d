@@ -10,9 +10,10 @@ import elasticsearch.detail.string;
 import elasticsearch.domain.action.request.method;
 
 struct ElasticsearchRequest(ElasticsearchMethod Method) {
+    enum method = Method;
     string uri;
 
-    static if (Method == ElasticsearchMethod.put || Method == ElasticsearchMethod.POST) {
+    static if (Method == ElasticsearchMethod.PUT || Method == ElasticsearchMethod.POST) {
         string data;
     }
 }
