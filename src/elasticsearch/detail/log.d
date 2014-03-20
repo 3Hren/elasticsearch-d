@@ -19,12 +19,12 @@ void log(Level level, Args...)(string message, Args args) {
     formattedWrite(messageWriter, message, args);
 
     auto writer = appender!string();
-    formattedWrite(writer, "[%s] [%s]: ", Clock.currTime(), level);
-    writeln(writer.data ~ messageWriter.data);  
+    formattedWrite(writer, "[%-27s] [%-7s]: ", to!string(Clock.currTime()), level);
+    writeln(writer.data ~ messageWriter.data);
 }
 
 void log(Level level, T)(T value) if (!is(typeof(value) == string)) {
     auto writer = appender!string();
-    formattedWrite(writer, "[%s] [%s]: ", Clock.currTime(), level);
+    formattedWrite(writer, "[%-27s] [%-7s]: ", to!string(Clock.currTime()), level);
     writeln(writer.data ~ to!string(value));
 }
