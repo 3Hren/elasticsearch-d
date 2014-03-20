@@ -12,8 +12,8 @@ import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.method;
 import elasticsearch.testing;
 
-mixin template BaseIndexRequest(ElasticsearchMethod method) {
-    enum Method = method;
+mixin template BaseIndexRequest(ElasticsearchMethod Method) {
+    enum method = Method;
     mixin UriBasedRequest!(typeof(this));
 
     private string index;

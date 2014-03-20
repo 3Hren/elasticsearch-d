@@ -9,13 +9,10 @@ import vibe.inet.path;
 import elasticsearch.detail.string;
 import elasticsearch.domain.action.request.method;
 
-struct ElasticsearchRequest(ElasticsearchMethod Method) {
-    enum method = Method;
+struct ElasticsearchRequest {
     string uri;
-
-    static if (Method == ElasticsearchMethod.PUT || Method == ElasticsearchMethod.POST) {
-        string data;
-    }
+    ElasticsearchMethod method;
+    string data;
 }
 
 class UriBuilder {

@@ -10,7 +10,7 @@ import elasticsearch.domain.action.request.method;
 import elasticsearch.testing;
 
 struct GetRequest {
-    enum Method = ElasticsearchMethod.GET;
+    enum method = ElasticsearchMethod.GET;
     mixin UriBasedRequest!GetRequest;
 
     private string index;

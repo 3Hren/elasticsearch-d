@@ -54,10 +54,8 @@ class Client {
     }
 
     public IndexResponse!(Request) index(Request, T)(in Request action, T post) {
-        alias Method = Request.Method;
-
         string data = serializeToJson(post).toString();
-        auto request = ElasticsearchRequest!(Method)(action.uri, data);
+        auto request = ElasticsearchRequest(action.uri, action.method, data);
         auto response = perform(request);
         auto result = deserializeJson!(IndexResponse!(Request).Result)(response.data);
         return IndexResponse!(Request)(response, result);
@@ -69,16 +67,14 @@ class Client {
     }
 
     public T get(T)(in GetRequest action) {
-        alias Method = GetRequest.Method;
-
-        auto request = ElasticsearchRequest!(Method)(action.uri);
+        auto request = ElasticsearchRequest(action.uri, action.method);
         auto response = perform(request);
 
         if (response.code != 200) {
             if (response.code == 404) {
-                throw new ElasticsearchError!(Method)("document not found", response);
+                throw new ElasticsearchError("document not found", response);
             } else {
-                throw new ElasticsearchError!(Method)("document can't be extracted", response);
+                throw new ElasticsearchError("document can't be extracted", response);
             }
         }
 
@@ -87,29 +83,25 @@ class Client {
     }
 
     public Json search(in SearchRequest action) {
-        alias Method = SearchRequest.Method;
-
-        auto request = ElasticsearchRequest!(Method)(action.uri, action.data);
+        auto request = ElasticsearchRequest(action.uri, action.method, action.data);
         auto response = perform(request);
         auto result = deserializeJson!(Json)(response.data);
         return result;
     }
 
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {
-        alias Method = NodesInfoRequest.Method;
-
-        auto request = ElasticsearchRequest!(Method)(action.uri);
+        auto request = ElasticsearchRequest(action.uri, action.method);
         auto response = perform(request);
         auto result = deserializeJson!(NodesInfoResponse.Result)(response.data);
         return result;
     }
 
-    private ElasticsearchResponse!(Method) perform(ElasticsearchMethod Method)(ElasticsearchRequest!(Method) request) {
-        ElasticsearchResponse!(Method) response = transport.perform(request);
+    private ElasticsearchResponse perform(ElasticsearchRequest request) {
+        ElasticsearchResponse response = transport.perform(request);
         if (!response.success) {
             Json result = deserializeJson!(Json)(response.data);
             auto reason = to!string(result["error"]);
-            throw new ElasticsearchError!(Method)(reason, response);
+            throw new ElasticsearchError(reason, response);
         }
 
         return response;

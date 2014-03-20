@@ -25,7 +25,7 @@ enum SearchType {
 }
 
 struct SearchRequest {
-    enum Method = ElasticsearchMethod.POST;
+    enum method = ElasticsearchMethod.POST;
     mixin UriBasedRequest!SearchRequest;
 
     private const string[] indices;
@@ -81,7 +81,7 @@ class SearchRequestTestCase : BaseTestCase!SearchRequestTestCase {
 
     @Test("SearchRequest has post method")
     unittest {
-        Assert.equals(ElasticsearchMethod.POST, SearchRequest.Method);
+        Assert.equals(ElasticsearchMethod.POST, SearchRequest.method);
     }
 
     @Test("Single index constructor properly maps into uri")

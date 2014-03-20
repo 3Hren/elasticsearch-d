@@ -3,7 +3,7 @@ import std.stdio;
 import std.typecons;
 import std.variant;
 
-import vibe.core.core;
+//import vibe.core.core;
 import vibe.data.json;
 
 import elasticsearch.client;
@@ -134,7 +134,7 @@ unittest {
     try {
         IndexResponse!ManualIndexRequest response = client.index(request, tweet);
         assert(false);
-    } catch (ElasticsearchError!(ManualIndexRequest.Method) err) {
+    } catch (ElasticsearchError err) {
         assert(err.response.code == 409);
     } finally {
         log!(Level.info)("'IndexRequest' finished\n");
@@ -386,18 +386,18 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
         log!(Level.info)("'SearchRequest' finished: %s", response);
     }
 
-    @Test("Async SearchRequest with match all")
-    unittest {
-        Client client = new Client();
-        SearchRequest request = SearchRequest("twitter");
-        runTask({
-            auto response = client.search(request);
-            log!(Level.info)("'SearchRequest' finished: %s", response);
-            exitEventLoop();
-        });
+//    @Test("Async SearchRequest with match all")
+//    unittest {
+//        Client client = new Client();
+//        SearchRequest request = SearchRequest("twitter");
+//        runTask({
+//            auto response = client.search(request);
+//            log!(Level.info)("'SearchRequest' finished: %s", response);
+//            exitEventLoop();
+//        });
 
-        runEventLoop();
-    }
+//        runEventLoop();
+//    }
 }
 
 }

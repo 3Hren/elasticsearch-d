@@ -15,6 +15,7 @@ import elasticsearch.detail.log;
 import elasticsearch.domain.action.response.base;
 import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.request.base;
+import elasticsearch.domain.action.request.cluster.node.info;
 import elasticsearch.domain.action.request.method;
 
 struct NodeUpdateSettings {
@@ -54,7 +55,7 @@ class Transport {
         pool.add(new HttpNodeClient(address));
     }
 
-    public ElasticsearchResponse!Method perform(ElasticsearchMethod Method)(ElasticsearchRequest!Method request) {
+    public ElasticsearchResponse perform(ElasticsearchRequest request) {
         log!(Level.trace)("performing %s ...", request);
         if (pool.empty()) {
             throw new PoolIsEmptyError();
@@ -72,9 +73,10 @@ class Transport {
 
     private void updateNodesList() {
         log!(Level.trace)("updating nodes list ...");
-        ElasticsearchRequest!(ElasticsearchMethod.GET) request = ElasticsearchRequest!(ElasticsearchMethod.GET)("/_nodes/_all/none");
-        ElasticsearchResponse!(ElasticsearchMethod.GET) response = perform(request);
-        NodesInfoResponse.Result result = deserializeJson!(NodesInfoResponse.Result)(response.data);
+        auto action = NodesInfoRequest(NodesInfoRequest.Type.none);
+        auto request = ElasticsearchRequest(action.uri, action.method);
+        auto response = perform(request);
+        auto result = deserializeJson!(NodesInfoResponse.Result)(response.data);
 
         log!(Level.trace)("nodes list successfully updated: %s", map!(node => node.httpAddress)(result.nodes.values));
         foreach (node; result.nodes) {

@@ -1,12 +1,11 @@
 module elasticsearch.exception;
 
 import elasticsearch.domain.action.response.base;
-import elasticsearch.domain.action.request.method;
 
-class ElasticsearchError(ElasticsearchMethod Method) : Error {
-    ElasticsearchResponse!Method response;
+class ElasticsearchError : Error {
+    ElasticsearchResponse response;
 
-    public this(string reason, ElasticsearchResponse!Method response) {
+    public this(string reason, ElasticsearchResponse response) {
         super(reason);
         this.response = response;
     }
@@ -15,5 +14,5 @@ class ElasticsearchError(ElasticsearchMethod Method) : Error {
 class PoolIsEmptyError : Error {
     public this() {
         super("pool is empty");
-    }   
+    }
 }
