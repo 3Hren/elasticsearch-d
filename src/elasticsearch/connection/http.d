@@ -26,7 +26,7 @@ abstract class NodeClient {
     //public abstract ElasticsearchResponse!(ElasticsearchMethod.head) perform(ElasticsearchRequest!(ElasticsearchMethod.head) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.GET) perform(ElasticsearchRequest!(ElasticsearchMethod.GET) request);
     public abstract ElasticsearchResponse!(ElasticsearchMethod.put) perform(ElasticsearchRequest!(ElasticsearchMethod.put) request);
-    public abstract ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request);
+    public abstract ElasticsearchResponse!(ElasticsearchMethod.POST) perform(ElasticsearchRequest!(ElasticsearchMethod.POST) request);
 
     public override string toString() {
         return super.toString() ~ "(" ~ address ~ ")";
@@ -94,12 +94,38 @@ class HttpNodeClient : NodeClient {
         return ElasticsearchResponse!(ElasticsearchMethod.put)(status.code == 200, status.code, address, content, request);
     }
 
-    public override ElasticsearchResponse!(ElasticsearchMethod.post) perform(ElasticsearchRequest!(ElasticsearchMethod.post) request) {
-        string url = getUrl(request);
-        log!(Level.trace)("requesting %s ...", url);
-        char[] content = std.net.curl.post(url, request.data);
-        log!(Level.trace)("request finished: %s", content);
-        return ElasticsearchResponse!(ElasticsearchMethod.post)(true, 200, address, to!string(content), request);
+    public override ElasticsearchResponse!(ElasticsearchMethod.POST) perform(ElasticsearchRequest!(ElasticsearchMethod.POST) request) {
+        alias Method = ElasticsearchMethod.POST;
+
+        Appender!string writer = appender!string();
+        string url = getUrl(request); // TODO: Replace with property getter.
+
+        std.net.curl.HTTP http = std.net.curl.HTTP(url);
+        http.method = std.net.curl.HTTP.Method.post;
+        auto msg = request.data;
+        http.onSend = (void[] data) {
+            auto m = cast(void[])msg;
+            size_t len = m.length > data.length ? data.length : m.length;
+            if (len == 0) {
+                return len;
+            }
+
+            data[0..len] = m[0..len];
+            msg = msg[len..$];
+            return len;
+        };
+
+        http.onReceive = delegate(ubyte[] data) {
+            writer.put(data);
+            return data.length;
+        };
+
+        log!(Level.trace)("requesting [%s] %s -d %s...", Method, url, request.data);
+        http.perform();
+        auto status = http.statusLine;
+        string content = writer.data;
+        log!(Level.trace)("request finished: [%d] %s", status.code, content);
+        return ElasticsearchResponse!(ElasticsearchMethod.POST)(status.code == 200, status.code, address, content, request);
     }
 
     private string getUrl(T)(T request) {

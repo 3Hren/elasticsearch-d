@@ -84,7 +84,7 @@ struct ManualIndexRequest {
 }
 
 struct AutomaticIndexRequest {
-    mixin BaseIndexRequest!(ElasticsearchMethod.post);
+    mixin BaseIndexRequest!(ElasticsearchMethod.POST);
 
     public this(string index, string type) {
         this.index = index;

@@ -12,7 +12,7 @@ import elasticsearch.domain.action.request.method;
 struct ElasticsearchRequest(ElasticsearchMethod Method) {
     string uri;
 
-    static if (Method == ElasticsearchMethod.put || Method == ElasticsearchMethod.post) {
+    static if (Method == ElasticsearchMethod.put || Method == ElasticsearchMethod.POST) {
         string data;
     }
 }

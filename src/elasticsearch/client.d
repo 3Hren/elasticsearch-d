@@ -87,9 +87,13 @@ class Client {
         return result.source;
     }
 
-    public Json search(in SearchRequest request) {
-        Json json;
-        return json;
+    public Json search(in SearchRequest action) {
+        alias Method = SearchRequest.Method;
+
+        auto request = ElasticsearchRequest!(Method)(action.uri, action.data);
+        auto response = perform(request);
+        auto result = deserializeJson!(Json)(response.data);
+        return result;
     }
 
     public NodesInfoResponse.Result nodesInfo(NodesInfoRequest action) {

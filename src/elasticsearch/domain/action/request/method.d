@@ -4,6 +4,6 @@ enum ElasticsearchMethod {
     head,
     GET,
     put,
-    post,
+    POST,
     del
 }
