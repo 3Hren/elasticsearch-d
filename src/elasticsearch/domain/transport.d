@@ -45,7 +45,6 @@ class Transport {
         }
 
         if (settings.nodeUpdate.onStart) {
-            log!(Level.trace)("updating nodes list ...");
             updateNodesList();
         }
     }
