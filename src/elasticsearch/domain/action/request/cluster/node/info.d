@@ -5,13 +5,14 @@ import std.conv;
 import std.stdio;
 import std.traits;
 
+import vibe.http.common;
+
 import elasticsearch.domain.action.request.base;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.detail.string;
 import elasticsearch.testing;
 
 struct NodesInfoRequest {
-    enum method = ElasticsearchMethod.GET;
+    enum method = HTTPMethod.GET;
     mixin UriBasedRequest!NodesInfoRequest;
 
     enum Type {

@@ -5,12 +5,12 @@ import std.algorithm;
 import std.conv;
 import std.string;
 
+import vibe.http.common;
 import vibe.inet.path;
 
 import elasticsearch.detail.string;
 import elasticsearch.detail.log;
 import elasticsearch.domain.action.request.base;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.testing;
 
 enum SearchType {
@@ -25,7 +25,7 @@ enum SearchType {
 }
 
 struct SearchRequest {
-    enum method = ElasticsearchMethod.POST;
+    enum method = HTTPMethod.POST;
     mixin UriBasedRequest!SearchRequest;
 
     private const string[] indices;
@@ -81,7 +81,7 @@ class SearchRequestTestCase : BaseTestCase!SearchRequestTestCase {
 
     @Test("SearchRequest has post method")
     unittest {
-        Assert.equals(ElasticsearchMethod.POST, SearchRequest.method);
+        Assert.equals(HTTPMethod.POST, SearchRequest.method);
     }
 
     @Test("Single index constructor properly maps into uri")

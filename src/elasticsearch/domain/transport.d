@@ -3,7 +3,7 @@ module elasticsearch.domain.transport;
 import std.algorithm;
 import std.conv;
 import std.regex;
-import std.socket : Address, AddressInfo, SocketType, ProtocolType;
+import std.socket : Address, AddressFamily, AddressInfo, SocketType, ProtocolType;
 
 import vibe.data.serialization;
 import vibe.data.json;
@@ -16,7 +16,6 @@ import elasticsearch.domain.action.response.base;
 import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.cluster.node.info;
-import elasticsearch.domain.action.request.method;
 
 struct NodeUpdateSettings {
     bool onStart = true;
@@ -40,7 +39,7 @@ class Transport {
     private ClientPool!NodeClient pool;
 
     public this(TransportSettings settings = TransportSettings()) {
-        AddressInfo[] infos = std.socket.getAddressInfo(settings.host, to!string(settings.port), SocketType.STREAM, ProtocolType.TCP);
+        AddressInfo[] infos = std.socket.getAddressInfo(settings.host, to!string(settings.port), AddressFamily.INET, SocketType.STREAM, ProtocolType.TCP);
         foreach (AddressInfo info; infos) {
             addNode(info.address);
         }

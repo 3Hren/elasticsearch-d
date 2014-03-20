@@ -4,14 +4,14 @@ import std.algorithm;
 import std.conv;
 import std.typecons;
 
+import vibe.http.common;
 import vibe.inet.path;
 
 import elasticsearch.detail.string;
-import elasticsearch.domain.action.request.method;
 
 struct ElasticsearchRequest {
     string uri;
-    ElasticsearchMethod method;
+    HTTPMethod method;
     string data;
 }
 

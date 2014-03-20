@@ -13,7 +13,6 @@ import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.response.document.get;
 import elasticsearch.domain.action.response.document.index;
 import elasticsearch.domain.action.request.base;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.domain.action.request.cluster.node.info;
 import elasticsearch.domain.action.request.document.get;
 import elasticsearch.domain.action.request.document.index;

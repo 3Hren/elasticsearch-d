@@ -6,13 +6,13 @@ import std.datetime;
 import std.typecons;
 import std.uri;
 
+import vibe.http.common;
 import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.testing;
 
-mixin template BaseIndexRequest(ElasticsearchMethod Method) {
+mixin template BaseIndexRequest(HTTPMethod Method) {
     enum method = Method;
     mixin UriBasedRequest!(typeof(this));
 
@@ -74,7 +74,7 @@ mixin template BaseIndexRequest(ElasticsearchMethod Method) {
 }
 
 struct ManualIndexRequest {
-    mixin BaseIndexRequest!(ElasticsearchMethod.PUT);
+    mixin BaseIndexRequest!(HTTPMethod.PUT);
 
     public this(string index, string type, string id) {
         this.index = index;
@@ -84,7 +84,7 @@ struct ManualIndexRequest {
 }
 
 struct AutomaticIndexRequest {
-    mixin BaseIndexRequest!(ElasticsearchMethod.POST);
+    mixin BaseIndexRequest!(HTTPMethod.POST);
 
     public this(string index, string type) {
         this.index = index;

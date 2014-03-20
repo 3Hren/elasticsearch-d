@@ -1,6 +1,5 @@
 module elasticsearch.domain.action.response.base;
 
-import elasticsearch.domain.action.request.method;
 import elasticsearch.domain.action.request.base;
 
 struct ElasticsearchResponse {

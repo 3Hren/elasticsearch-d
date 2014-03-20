@@ -6,9 +6,10 @@ import std.net.curl : CurlException;
 import std.socket;
 import std.stdio;
 
+import vibe.http.common;
+
 import elasticsearch.exception;
 import elasticsearch.detail.log;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.response.base;
 
@@ -36,61 +37,38 @@ class HttpNodeClient : NodeClient {
     }
 
     public override ElasticsearchResponse perform(ElasticsearchRequest request) {
+        import vibe.http.client;
+        import vibe.stream.operations;
+
         Appender!string stream = appender!string();
         string url = makeUrl(request);
+        uint statusCode = 200;
 
-        auto http = std.net.curl.HTTP(url);
-        http.method = mapMethod!(std.net.curl.HTTP.Method)(request.method);
-
-        if (request.method == ElasticsearchMethod.PUT || request.method == ElasticsearchMethod.POST) {
-            auto msg = request.data;
-            http.contentLength = msg.length;
-            http.onSend = (void[] data) {
-                auto m = cast(void[])msg;
-                size_t len = m.length > data.length ? data.length : m.length;
-                if (len == 0) {
-                    return len;
-                }
-
-                data[0..len] = m[0..len];
-                msg = msg[len..$];
-                return len;
-            };
-        }
-
-        http.onReceive = delegate(ubyte[] data) {
-            stream.put(data);
-            return data.length;
-        };
-
-        if (request.method == ElasticsearchMethod.PUT || request.method == ElasticsearchMethod.POST) {
+        if (request.method == HTTPMethod.PUT || request.method == HTTPMethod.POST) {
             log!(Level.trace)("requesting [%s] %s -d %s ...", request.method, url, request.data);
         } else {
             log!(Level.trace)("requesting [%s] %s ...", request.method, url);
         }
-        http.perform();
-        auto status = http.statusLine;
+
+        requestHTTP(url,
+            (scope req) {
+                req.method = request.method;
+                if (request.method == HTTPMethod.PUT || request.method == HTTPMethod.POST) {
+                    req.writeBody(cast(ubyte[])(request.data));
+                }
+            },
+            (scope res) {
+                stream.put(res.bodyReader.readAllUTF8());
+                statusCode = res.statusCode;
+            }
+        );
+
         string content = stream.data;
-        log!(Level.trace)("request finished: [%d] %s", status.code, content);
-        return ElasticsearchResponse(status.code, address, content, request);
+        log!(Level.trace)("request finished: [%d] %s", statusCode, content);
+        return ElasticsearchResponse(statusCode, address, content, request);
     }
 
     private string makeUrl(T)(T request) const {
-        return address ~ request.uri;
-    }
-
-    private T mapMethod(T)(ElasticsearchMethod method) const pure @safe if (is(T == std.net.curl.HTTP.Method)) {
-        final switch (method) with (ElasticsearchMethod) {
-            case HEAD:
-                return std.net.curl.HTTP.Method.head;
-            case GET:
-                return std.net.curl.HTTP.Method.get;
-            case PUT:
-                return std.net.curl.HTTP.Method.put;
-            case POST:
-                return std.net.curl.HTTP.Method.post;
-            case DELETE:
-                return std.net.curl.HTTP.Method.del;
-        }
+        return "http://" ~ address ~ request.uri;
     }
 }

@@ -18,9 +18,9 @@ import elasticsearch.exception;
 import elasticsearch.testing;
 
 shared static this() {
-//    Runtime.moduleUnitTester = {
-//        return TestRunner.run();
-//    };
+    Runtime.moduleUnitTester = {
+        return TestRunner.run();
+    };
 }
 
 void main() {}
@@ -386,18 +386,27 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
         log!(Level.info)("'SearchRequest' finished: %s", response);
     }
 
-//    @Test("Async SearchRequest with match all")
-//    unittest {
-//        Client client = new Client();
-//        SearchRequest request = SearchRequest("twitter");
-//        runTask({
-//            auto response = client.search(request);
-//            log!(Level.info)("'SearchRequest' finished: %s", response);
-//            exitEventLoop();
-//        });
+    @Test("Async SearchRequest with match all")
+    unittest {
+        import vibe.core.core;
+        import vibe.core.log : setLogLevel, LogLevel;
+        Client client = new Client();
+        SearchRequest request = SearchRequest("twitter");
+        uint completed;
+        for (int i = 0; i < 10; i++) {
+        runTask({
+            auto response = client.search(request);
+            completed++;
+            log!(Level.info)("'SearchRequest' finished: [%d] %s", completed, response);
+            if (completed == 9) {
+                exitEventLoop();
+            }
+        });
+        }
 
-//        runEventLoop();
-//    }
+        setLogLevel(LogLevel.info);
+        runEventLoop();
+    }
 }
 
 }

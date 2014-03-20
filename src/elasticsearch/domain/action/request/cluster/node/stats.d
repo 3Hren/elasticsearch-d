@@ -1,7 +1,7 @@
 module elasticsearch.domain.action.request.cluster.node.stats;
 
-import elasticsearch.domain.action.request.method;
+import vibe.http.common;
 
 struct NodesStatsRequest {
-    enum method = ElasticsearchMethod.GET;
+    enum method = HTTPMethod.GET;
 }

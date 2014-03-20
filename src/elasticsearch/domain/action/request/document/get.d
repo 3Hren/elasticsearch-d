@@ -3,14 +3,14 @@ module elasticsearch.domain.action.request.document.get;
 import std.algorithm;
 import std.conv;
 
+import vibe.http.common;
 import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
-import elasticsearch.domain.action.request.method;
 import elasticsearch.testing;
 
 struct GetRequest {
-    enum method = ElasticsearchMethod.GET;
+    enum method = HTTPMethod.GET;
     mixin UriBasedRequest!GetRequest;
 
     private string index;
