@@ -45,13 +45,14 @@ class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
     unittest {
         auto client = new Client();
         auto request = GetRequest!()("twitter", "tweet", "1");
+        request.setFields("message");
         auto result = client.getFull(request);
         Assert.equals("twitter", result.index);
         Assert.equals("tweet", result.type);
         Assert.equals("1", result.id);
         static assert(is(typeof(result.source) == Json), "source type must be Json object");
-        log!(Level.trace)("raw message: %s", result.source["message"]);
-        log!(Level.trace)("casted message by name: %s", result.field!string("message"));
+        log!(Level.trace)("raw message: %s", result.fields["message"]);
+        log!(Level.trace)("casted message by name: %s", result.field!(string[])("message")[0]);
         log!(Level.trace)("'GetRequest' finished: %s", result);
     }
 }

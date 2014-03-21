@@ -22,10 +22,15 @@ struct GetResult(T) {
     bool found;
 
     @name("_source")
+    @optional
     T source;
 
+    @name("fields")
+    @optional
+    Json fields;
+
     public R field(R)(string name) {
-        return deserializeJson!R(source[name]);
+        return deserializeJson!R(fields[name]);
     }
 }
 
