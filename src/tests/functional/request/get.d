@@ -14,7 +14,7 @@ class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
         GetRequest request = GetRequest("twitter", "tweet", "1");
         Tweet tweet = client.get!Tweet(request);
 
-        log!(Level.info)("'GetRequest' finished: %s\n", tweet);
+        log!(Level.trace)("'GetRequest' finished: %s\n", tweet);
     }
 
     @Test("GetRequest with automatic index detecting")
@@ -22,6 +22,6 @@ class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
         auto settings = ClientSettings("twitter");
         auto client = new Client(settings);
         Tweet tweet = client.get!Tweet("tweet", "1");
-        log!(Level.info)("'GetRequest' finished: %s\n", tweet);
+        log!(Level.trace)("'GetRequest' finished: %s\n", tweet);
     }
 }

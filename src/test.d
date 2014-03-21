@@ -343,7 +343,7 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
         SearchRequest request = SearchRequest("twitter");
         auto response = client.search(request);
 
-        log!(Level.info)("'SearchRequest' finished: %s", response);
+        log!(Level.trace)("'SearchRequest' finished: %s", response);
     }
 
     @Test("Async SearchRequest with match all")
@@ -357,7 +357,7 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
             runTask({
                 auto response = client.search(request);
                 completed++;
-                log!(Level.info)("'SearchRequest' finished: [%d] %s", completed, response);
+                log!(Level.trace)("'SearchRequest' finished: [%d] %s", completed, response);
                 if (completed == 10) {
                     exitEventLoop();
                 }
