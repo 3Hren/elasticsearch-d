@@ -70,6 +70,15 @@ class Client {
     }
 
     public GetRequest!(T).Type get(T)(in GetRequest!T action) {
+        auto result = getFull!T(action);
+        return result.source;
+    }
+
+    public GetResponse!(Json).Result getFull(in GetRequest!Json action) {
+        return getFull!Json(action);
+    }
+
+    private GetResponse!(T).Result getFull(T)(in GetRequest!T action) {
         auto request = ElasticsearchRequest(action.uri, action.method);
         auto response = perform(request);
 
@@ -81,8 +90,8 @@ class Client {
             }
         }
 
-        auto result = deserializeJson!(GetResponse!(GetRequest!(T).Type).Result)(response.data);
-        return result.source;
+        auto result = deserializeJson!(GetResponse!(T).Result)(response.data);
+        return result;
     }
 
     public Json search(in SearchRequest action) {
