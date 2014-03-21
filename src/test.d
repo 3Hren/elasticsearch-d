@@ -3,27 +3,17 @@ import std.stdio;
 import std.typecons;
 import std.variant;
 
-//import vibe.core.core;
 import vibe.data.json;
 
 import elasticsearch.client;
 import elasticsearch.detail.log;
 import elasticsearch.domain.action.request.cluster.node.info;
-import elasticsearch.domain.action.request.document.get;
 import elasticsearch.domain.action.request.document.index;
 import elasticsearch.domain.action.request.search.search;
 import elasticsearch.domain.action.response.cluster.node.info;
 import elasticsearch.domain.action.response.document.index;
 import elasticsearch.exception;
 import elasticsearch.testing;
-
-shared static this() {
-    Runtime.moduleUnitTester = {
-        return TestRunner.run();
-    };
-}
-
-void main() {}
 
 version (FunctionalTesting) {
 
@@ -241,36 +231,6 @@ unittest {
     log!(Level.info)("'NodesInfoRequest' finished: %s\n", result);
 }
 
-unittest {
-    log!(Level.info)("Performing 'GetRequest' ...");
-
-    struct Tweet {
-        string message;
-    }
-
-    Client client = new Client();
-    GetRequest request = GetRequest("twitter", "tweet", "1");
-    Tweet tweet = client.get!Tweet(request);
-
-    log!(Level.info)("'GetRequest' finished: %s\n", tweet);
-}
-
-unittest {
-    log!(Level.info)("Performing 'GetRequest' with automatic index detecting ...");
-
-    struct Tweet {
-        string message;
-    }
-
-    Client client = new Client();
-    try {
-        Tweet tweet = client.get!Tweet("tweet", "1");
-        log!(Level.info)("'GetRequest' finished: %s\n", tweet);
-    } catch (Error err) {
-        log!(Level.info)("'GetRequest' finished: %s\n", err.msg);
-    }
-}
-
 template isNullable(T) {
     const isNullable = __traits(compiles, (T t){
         t.isNull();
@@ -394,19 +354,44 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
         SearchRequest request = SearchRequest("twitter");
         uint completed;
         for (int i = 0; i < 10; i++) {
-        runTask({
-            auto response = client.search(request);
-            completed++;
-            log!(Level.info)("'SearchRequest' finished: [%d] %s", completed, response);
-            if (completed == 9) {
-                exitEventLoop();
-            }
-        });
+            runTask({
+                auto response = client.search(request);
+                completed++;
+                log!(Level.info)("'SearchRequest' finished: [%d] %s", completed, response);
+                if (completed == 10) {
+                    exitEventLoop();
+                }
+            });
         }
 
         setLogLevel(LogLevel.info);
         runEventLoop();
     }
 }
+
+//class MultiGetTestCase : BaseTestCase!MultiGetTestCase {
+//    @Test("Functional")
+//    unittest {
+//        struct Tweet {
+//            string message;
+//        }
+
+//        struct Person {
+//            string name;
+//            uint age;
+//        }
+
+//        Client client = new Client();
+//        auto rq1 = GetRequest!Tweet("twitter", "tweet", 1);
+//        auto rq2 = GetRequest!Tweet("twitter", "tweet", 2);
+//        auto rq3 = GetRequest!Person("persons", "person", 1);
+//        auto result = client.multiGet(rq1, rq2, rq3);
+//        typeof(result) == [Tweet, Tweet, Person];
+//        auto result = client.multiGet!Tweet("index", "type" [1, 2]);
+//        auto result = client.multiGet!Tweet("index", [1, 2]);
+//        auto result = client.multiGet!Tweet([1, 2]);
+//        log!(Level.info)("'MultiGetRequest' finished: %s", response);
+//    }
+//}
 
 }
