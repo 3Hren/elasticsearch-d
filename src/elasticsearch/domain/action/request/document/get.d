@@ -3,15 +3,17 @@ module elasticsearch.domain.action.request.document.get;
 import std.algorithm;
 import std.conv;
 
+import vibe.data.json;
 import vibe.http.common;
 import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
 import elasticsearch.testing;
 
-struct GetRequest {
+struct GetRequest(T = Json) {
+    alias Type = T;
     enum method = HTTPMethod.GET;
-    mixin UriBasedRequest!GetRequest;
+    mixin UriBasedRequest!(typeof(this));
 
     private string index;
     private string type;
@@ -33,8 +35,12 @@ struct GetRequest {
 //! ==================== UNIT TESTS ====================
 
 class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
+    struct Tweet {
+        string message;
+    }
+
     @Test("Uri")
     unittest {
-        assert("/twitter/tweet/1" == GetRequest("twitter", "tweet", "1").uri);
+        assert("/twitter/tweet/1" == GetRequest!Tweet("twitter", "tweet", "1").uri);
     }
 }

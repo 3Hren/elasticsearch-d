@@ -60,16 +60,20 @@ class Client {
         return IndexResponse!(Request)(response, result);
     }
 
-    public T get(T)(string type, string id) {
-        GetRequest request = GetRequest(settings.index, type, id);
-        return this.get!(T)(request);
+    public T get(T)(string index, string type, string id) {
+        auto request = GetRequest!T(index, type, id);
+        return this.get(request);
     }
 
-    public T get(T)(in GetRequest action) {
+    public T get(T)(string type, string id) {
+        return this.get!T(settings.index, type, id);
+    }
+
+    public GetRequest!(T).Type get(T)(in GetRequest!T action) {
         auto request = ElasticsearchRequest(action.uri, action.method);
         auto response = perform(request);
 
-        if (response.code != 200) {
+        if (!response.success) {
             if (response.code == 404) {
                 throw new ElasticsearchError("document not found", response);
             } else {
@@ -77,7 +81,7 @@ class Client {
             }
         }
 
-        auto result = deserializeJson!(GetResponse!(T).Result)(response.data);
+        auto result = deserializeJson!(GetResponse!(GetRequest!(T).Type).Result)(response.data);
         return result.source;
     }
 

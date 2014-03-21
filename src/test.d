@@ -382,16 +382,22 @@ class SearchTestCase : BaseTestCase!SearchTestCase {
 //        }
 
 //        Client client = new Client();
+//        auto result = client.multiGet!Tweet([1, 2]);
+//        auto result = client.multiGet!Tweet("index", [1, 2]);
+//        auto result = client.multiGet!Tweet("index", "type" [1, 2]);
 //        auto rq1 = GetRequest!Tweet("twitter", "tweet", 1);
 //        auto rq2 = GetRequest!Tweet("twitter", "tweet", 2);
 //        auto rq3 = GetRequest!Person("persons", "person", 1);
-//        auto result = client.multiGet(rq1, rq2, rq3);
+//        auto result = client.multiGet!(Tweet, Tweet, Person)(rq1, rq2, rq3); + static assert length(T) == lenght(args)
 //        typeof(result) == [Tweet, Tweet, Person];
-//        auto result = client.multiGet!Tweet("index", "type" [1, 2]);
-//        auto result = client.multiGet!Tweet("index", [1, 2]);
-//        auto result = client.multiGet!Tweet([1, 2]);
+//        client.multiGetFull(rq1, rq2, rq3) -> Result[]
 //        log!(Level.info)("'MultiGetRequest' finished: %s", response);
 //    }
 //}
 
 }
+
+// Features:
+// - automatic nodes discovering
+// - synchronous api
+// - asynchronous fiber api

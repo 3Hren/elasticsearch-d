@@ -26,5 +26,5 @@ struct GetResult(T) {
 }
 
 struct GetResponse(T) {
-    mixin Response!(GetRequest, GetResult!(T));
+    mixin Response!(GetRequest!T, GetResult!T);
 }

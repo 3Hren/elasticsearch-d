@@ -5,7 +5,7 @@ import elasticsearch.testing;
 
 shared static this() {
     Runtime.moduleUnitTester = {
-        Logger.level = Level.info;
+        Logger.level = Level.trace;
         return TestRunner.run();
     };
 }
