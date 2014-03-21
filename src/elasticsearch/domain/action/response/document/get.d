@@ -1,9 +1,9 @@
 module elasticsearch.domain.action.response.document.get;
 
+import vibe.data.json;
+
 import elasticsearch.domain.action.response.base;
 import elasticsearch.domain.action.request.document.get;
-
-import vibe.data.json;
 
 struct GetResult(T) {
     @name("_index")
@@ -23,6 +23,10 @@ struct GetResult(T) {
 
     @name("_source")
     T source;
+
+    public R field(R)(string name) {
+        return deserializeJson!R(source[name]);
+    }
 }
 
 struct GetResponse(T) {

@@ -50,9 +50,8 @@ class GetRequestTestCase : BaseTestCase!GetRequestTestCase {
         Assert.equals("tweet", result.type);
         Assert.equals("1", result.id);
         static assert(is(typeof(result.source) == Json), "source type must be Json object");
-        result.source["message"];
-//        result.source.to!string("message");
-//        result.source.to!(Tweet.message);
+        log!(Level.trace)("raw message: %s", result.source["message"]);
+        log!(Level.trace)("casted message by name: %s", result.field!string("message"));
         log!(Level.trace)("'GetRequest' finished: %s", result);
     }
 }
