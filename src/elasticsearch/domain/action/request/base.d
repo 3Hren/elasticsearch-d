@@ -27,12 +27,16 @@ class UriBuilder {
         setPath(Strings.join(entries, "/"));
     }
 
-    public void addParameter(string name, string value) {
+    public void addParameter(bool encode = true)(string name, string value) {
         if (value.length == 0) {
             return;
         }
 
-        parameters[name] = std.uri.encodeComponent(value);
+        static if (encode) {
+            parameters[name] = std.uri.encodeComponent(value);
+        } else {
+            parameters[name] = value;
+        }
     }
 
     public void addParameter(T)(string name, Nullable!T value) {
