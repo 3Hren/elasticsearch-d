@@ -7,7 +7,6 @@ import std.typecons;
 import std.uri;
 
 import vibe.http.common;
-import vibe.inet.path;
 
 import elasticsearch.domain.action.request.base;
 import elasticsearch.testing;
