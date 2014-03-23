@@ -2,7 +2,6 @@ module elasticsearch.connection.http;
 
 import std.array;
 import std.conv;
-import std.net.curl : CurlException;
 import std.socket;
 import std.stdio;
 

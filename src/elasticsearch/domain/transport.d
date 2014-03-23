@@ -7,6 +7,7 @@ import std.socket : Address, AddressFamily, AddressInfo, SocketType, ProtocolTyp
 
 import vibe.data.serialization;
 import vibe.data.json;
+import vibe.http.common;
 
 import elasticsearch.connection.http;
 import elasticsearch.connection.pool;
@@ -63,7 +64,7 @@ class Transport {
         NodeClient client = pool.next();
         try {
             return client.perform(request);
-        } catch (CurlException error) {
+        } catch (HTTPStatusException error) {
             log!(Level.warning)("request failed: %s", error.msg);
             pool.remove(client);
             return perform(request);
