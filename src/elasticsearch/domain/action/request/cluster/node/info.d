@@ -81,31 +81,31 @@ struct NodesInfoRequest {
 class InfoRequestTestCase : BaseTestCase!InfoRequestTestCase {
     @Test("By default requests all info from all nodes")
     unittest {
-        assert("/_nodes/_all/" == NodesInfoRequest().uri);
+        Assert.equals("/_nodes/_all/", NodesInfoRequest().uri);
     }
 
     @Test("Various types of settings")
     unittest {
-        assert("/_nodes/_all/none" == NodesInfoRequest(NodesInfoRequest.Type.none).uri);
-        assert("/_nodes/_all/settings" == NodesInfoRequest(NodesInfoRequest.Type.settings).uri);
-        assert("/_nodes/_all/os" == NodesInfoRequest(NodesInfoRequest.Type.os).uri);
-        assert("/_nodes/_all/process" == NodesInfoRequest(NodesInfoRequest.Type.process).uri);
-        assert("/_nodes/_all/jvm" == NodesInfoRequest(NodesInfoRequest.Type.jvm).uri);
-        assert("/_nodes/_all/thread_pool" == NodesInfoRequest(NodesInfoRequest.Type.threadPool).uri);
-        assert("/_nodes/_all/network" == NodesInfoRequest(NodesInfoRequest.Type.network).uri);
-        assert("/_nodes/_all/transport" == NodesInfoRequest(NodesInfoRequest.Type.transport).uri);
-        assert("/_nodes/_all/http" == NodesInfoRequest(NodesInfoRequest.Type.http).uri);
-        assert("/_nodes/_all/plugins" == NodesInfoRequest(NodesInfoRequest.Type.plugins).uri);
-        assert("/_nodes/_all/" == NodesInfoRequest(NodesInfoRequest.Type.all).uri);
+        Assert.equals("/_nodes/_all/none", NodesInfoRequest(NodesInfoRequest.Type.none).uri);
+        Assert.equals("/_nodes/_all/settings", NodesInfoRequest(NodesInfoRequest.Type.settings).uri);
+        Assert.equals("/_nodes/_all/os", NodesInfoRequest(NodesInfoRequest.Type.os).uri);
+        Assert.equals("/_nodes/_all/process", NodesInfoRequest(NodesInfoRequest.Type.process).uri);
+        Assert.equals("/_nodes/_all/jvm", NodesInfoRequest(NodesInfoRequest.Type.jvm).uri);
+        Assert.equals("/_nodes/_all/thread_pool", NodesInfoRequest(NodesInfoRequest.Type.threadPool).uri);
+        Assert.equals("/_nodes/_all/network", NodesInfoRequest(NodesInfoRequest.Type.network).uri);
+        Assert.equals("/_nodes/_all/transport", NodesInfoRequest(NodesInfoRequest.Type.transport).uri);
+        Assert.equals("/_nodes/_all/http", NodesInfoRequest(NodesInfoRequest.Type.http).uri);
+        Assert.equals("/_nodes/_all/plugins", NodesInfoRequest(NodesInfoRequest.Type.plugins).uri);
+        Assert.equals("/_nodes/_all/", NodesInfoRequest(NodesInfoRequest.Type.all).uri);
 
-        assert("/_nodes/_all/settings,os" == NodesInfoRequest(NodesInfoRequest.Type.settings | NodesInfoRequest.Type.os).uri);
+        Assert.equals("/_nodes/_all/settings,os", NodesInfoRequest(NodesInfoRequest.Type.settings | NodesInfoRequest.Type.os).uri);
     }
 
     @Test("Can specify nodes")
     unittest {
-        assert("/_nodes/node1/" == NodesInfoRequest("node1").uri);
-        assert("/_nodes/node1/none" == NodesInfoRequest("node1", NodesInfoRequest.Type.none).uri);
-        assert("/_nodes/node1,node2/" == NodesInfoRequest(["node1", "node2"]).uri);
-        assert("/_nodes/node1,node2/none" == NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).uri);
+        Assert.equals("/_nodes/node1/", NodesInfoRequest("node1").uri);
+        Assert.equals("/_nodes/node1/none", NodesInfoRequest("node1", NodesInfoRequest.Type.none).uri);
+        Assert.equals("/_nodes/node1,node2/", NodesInfoRequest(["node1", "node2"]).uri);
+        Assert.equals("/_nodes/node1,node2/none", NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).uri);
     }
 }
