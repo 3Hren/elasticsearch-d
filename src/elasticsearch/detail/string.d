@@ -6,12 +6,12 @@ import std.string;
 import elasticsearch.testing;
 
 string underscored(in string s) nothrow {
-    enum PrepareRE = ctRegex!(`::`);
+    enum PrepareRX = ctRegex!(`::`);
     enum FirstCapRX = ctRegex!(`([A-Z]+)([A-Z][a-z])`);
     enum AllCapRX = ctRegex!(`([a-z\d])([A-Z])`);
 
     try {
-        return replaceAll(replaceAll(replaceAll(s, PrepareRE, "/"), FirstCapRX, "$1_$2"), AllCapRX, "$1_$2").tr("-", "_").toLower();
+        return replaceAll(replaceAll(replaceAll(s, PrepareRX, "/"), FirstCapRX, "$1_$2"), AllCapRX, "$1_$2").tr("-", "_").toLower();
     } catch (Exception) {
         return s;
     }
@@ -31,6 +31,9 @@ struct Strings {
         }
 
         result ~= array[$ - 1];
+        if (result.endsWith(separator)) {
+            return result[0 .. $ - separator.length];
+        }
         return result;
     }
 }
