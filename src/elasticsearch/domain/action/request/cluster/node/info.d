@@ -13,7 +13,7 @@ import elasticsearch.testing;
 
 struct NodesInfoRequest {
     enum method = HTTPMethod.GET;
-    mixin UriBasedRequest!NodesInfoRequest;
+    mixin UriBasedRequestV2!NodesInfoRequest;
 
     enum Type {
         none        = 1 << 0,
@@ -29,7 +29,16 @@ struct NodesInfoRequest {
         all = settings | os | process | jvm | threadPool | network | transport | http | plugins
     }
 
-    private string nodes;
+    @Path
+    private string index = "_nodes";
+
+    @Path
+    @IfDefault("_all")
+    private string[] nodes;
+
+    @Path
+    @Bitmask
+    @IfDefault("", Type.all)
     private Type type = Type.all;
 
     public this(Type type) {
@@ -41,39 +50,39 @@ struct NodesInfoRequest {
     }
 
     public this(string[] nodes, Type type = Type.all) {
-        this.nodes = to!string(Strings.join(nodes));
+        this.nodes = nodes.dup;
         this.type = type;
     }
 
-    private void buildUri(UriBuilder builder) const {
-        if (nodes.empty) {
-            builder.setPath("_nodes", "_all", typeToString(type));
-        } else {
-            builder.setPath("_nodes", nodes, typeToString(type));
-        }
-    }
+//    private void buildUri(UriBuilder builder) const {
+//        if (nodes.empty) {
+//            builder.setPath("_nodes", "_all", typeToString(type));
+//        } else {
+//            builder.setPath("_nodes", Strings.join(nodes), typeToString(type));
+//        }
+//    }
 
-    private static string typeToString(Type type) {
-        if (type == Type.none) {
-            return to!string(type);
-        }
+//    private static string typeToString(Type type) {
+//        if (type == Type.none) {
+//            return to!string(type);
+//        }
 
-        if (type == Type.all) {
-            return "";
-        }
+//        if (type == Type.all) {
+//            return "";
+//        }
 
-        auto writer = appender!string;
-        foreach (immutable flag; EnumMembers!Type) {
-            if ((type & flag) == flag) {
-                if (!writer.data.empty()) {
-                    writer.put(",");
-                }
-                writer.put(to!string(flag).underscored);
-            }
-        }
+//        auto writer = appender!string;
+//        foreach (immutable flag; EnumMembers!Type) {
+//            if ((type & flag) == flag) {
+//                if (!writer.data.empty()) {
+//                    writer.put(",");
+//                }
+//                writer.put(to!string(flag).underscored);
+//            }
+//        }
 
-        return writer.data;
-    }
+//        return writer.data;
+//    }
 }
 
 //! ==================== UNIT TESTS ====================
@@ -81,7 +90,7 @@ struct NodesInfoRequest {
 class InfoRequestTestCase : BaseTestCase!InfoRequestTestCase {
     @Test("By default requests all info from all nodes")
     unittest {
-        Assert.equals("/_nodes/_all/", NodesInfoRequest().uri);
+        Assert.equals("/_nodes/_all", NodesInfoRequest().uri);
     }
 
     @Test("Various types of settings")
@@ -96,16 +105,16 @@ class InfoRequestTestCase : BaseTestCase!InfoRequestTestCase {
         Assert.equals("/_nodes/_all/transport", NodesInfoRequest(NodesInfoRequest.Type.transport).uri);
         Assert.equals("/_nodes/_all/http", NodesInfoRequest(NodesInfoRequest.Type.http).uri);
         Assert.equals("/_nodes/_all/plugins", NodesInfoRequest(NodesInfoRequest.Type.plugins).uri);
-        Assert.equals("/_nodes/_all/", NodesInfoRequest(NodesInfoRequest.Type.all).uri);
+        Assert.equals("/_nodes/_all", NodesInfoRequest(NodesInfoRequest.Type.all).uri);
 
         Assert.equals("/_nodes/_all/settings,os", NodesInfoRequest(NodesInfoRequest.Type.settings | NodesInfoRequest.Type.os).uri);
     }
 
     @Test("Can specify nodes")
     unittest {
-        Assert.equals("/_nodes/node1/", NodesInfoRequest("node1").uri);
+        Assert.equals("/_nodes/node1", NodesInfoRequest("node1").uri);
         Assert.equals("/_nodes/node1/none", NodesInfoRequest("node1", NodesInfoRequest.Type.none).uri);
-        Assert.equals("/_nodes/node1,node2/", NodesInfoRequest(["node1", "node2"]).uri);
+        Assert.equals("/_nodes/node1,node2", NodesInfoRequest(["node1", "node2"]).uri);
         Assert.equals("/_nodes/node1,node2/none", NodesInfoRequest(["node1", "node2"], NodesInfoRequest.Type.none).uri);
     }
 }
