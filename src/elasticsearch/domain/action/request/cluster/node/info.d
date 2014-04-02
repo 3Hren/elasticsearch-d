@@ -53,36 +53,6 @@ struct NodesInfoRequest {
         this.nodes = nodes.dup;
         this.type = type;
     }
-
-//    private void buildUri(UriBuilder builder) const {
-//        if (nodes.empty) {
-//            builder.setPath("_nodes", "_all", typeToString(type));
-//        } else {
-//            builder.setPath("_nodes", Strings.join(nodes), typeToString(type));
-//        }
-//    }
-
-//    private static string typeToString(Type type) {
-//        if (type == Type.none) {
-//            return to!string(type);
-//        }
-
-//        if (type == Type.all) {
-//            return "";
-//        }
-
-//        auto writer = appender!string;
-//        foreach (immutable flag; EnumMembers!Type) {
-//            if ((type & flag) == flag) {
-//                if (!writer.data.empty()) {
-//                    writer.put(",");
-//                }
-//                writer.put(to!string(flag).underscored);
-//            }
-//        }
-
-//        return writer.data;
-//    }
 }
 
 //! ==================== UNIT TESTS ====================

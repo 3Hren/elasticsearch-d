@@ -10,10 +10,12 @@ import elasticsearch.detail.inflect;
 import elasticsearch.detail.log;
 import elasticsearch.domain.action.response.base;
 import elasticsearch.domain.action.response.cluster.node.info;
+import elasticsearch.domain.action.response.document.del;
 import elasticsearch.domain.action.response.document.get;
 import elasticsearch.domain.action.response.document.index;
 import elasticsearch.domain.action.request.base;
 import elasticsearch.domain.action.request.cluster.node.info;
+import elasticsearch.domain.action.request.document.del;
 import elasticsearch.domain.action.request.document.get;
 import elasticsearch.domain.action.request.document.index;
 import elasticsearch.domain.action.request.search.search;
@@ -91,6 +93,18 @@ class Client {
         }
 
         auto result = deserializeJson!(GetResponse!(T).Result)(response.data);
+        return result;
+    }
+
+    public DeleteResponse.Result deleteDocument(Id)(string index, string type, Id id) if (is(Id == string) || is(Id == uint)) {
+        auto request = DeleteRequest(index, type, id);
+        return deleteDocument(request);
+    }
+
+    public DeleteResponse.Result deleteDocument(in DeleteRequest action) {
+        auto request = ElasticsearchRequest(action.uri, action.method);
+        auto response = perform(request);
+        auto result = deserializeJson!(DeleteResponse.Result)(response.data);
         return result;
     }
 
