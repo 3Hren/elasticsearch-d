@@ -21,7 +21,10 @@ class DeleteRequestTestCase : BaseTestCase!DeleteRequestTestCase {
     @Test("Delete by index, type and id")
     unittest {
         auto client = new Client();
-        auto result = client.deleteDocument("twitter", "tweet", "100500");
-        log!(Level.trace)("'DeleteRequest' finished: %s", result);
+        try {
+            auto result = client.deleteDocument("twitter", "tweet", "100500");
+            log!(Level.trace)("'DeleteRequest' finished: %s", result);
+        } catch (ElasticsearchError err) {
+        }
     }
 }
