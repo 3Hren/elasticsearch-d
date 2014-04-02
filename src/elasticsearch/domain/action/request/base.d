@@ -152,25 +152,16 @@ mixin template UriBasedRequestV2(U) {
         foreach (memberName; __traits(allMembers, T)) {
         }
 
-        import std.stdio;
         import std.typetuple : TypeTuple, staticIndexOf;
 
         string[] paths;
         foreach (i, FieldType; FieldTypeTuple!T) {
-            pragma(msg, "I: " ~ to!string(i) ~ "\n");
             enum fieldName = T.tupleof[i].stringof;
             alias Field = TypeTuple!(__traits(getMember, T, fieldName))[0];
             alias Attributes = TypeTuple!(__traits(getAttributes, Field));
-            pragma(msg, "[" ~ FieldType.stringof ~ "] " ~ fieldName);
-            pragma(msg, "@Attributes: " ~ Attributes.stringof);
             static if (hasAttribute!(Field, PathAttribute)) {
-                pragma(msg, "We have path attribute for: " ~ fieldName);
-                writeln(Field);
                 static if (isArray!(FieldType) && !is(FieldType : string)) {
-                    pragma(msg, "AT " ~ (ArrayElementType!FieldType).stringof);
                     enum idx = staticIndexOf!(DefaultAttribute!(string, ArrayElementType!FieldType), typeof(Attributes));
-                    pragma(msg, "Attribute: " ~ typeof(Attributes).stringof);
-                    pragma(msg, "Index: " ~ to!string(idx));
                     static if (idx != -1) {
                         enum attribute = Attributes[idx];
                         if (Field.empty) {
@@ -183,8 +174,6 @@ mixin template UriBasedRequestV2(U) {
                     }
                 } else {
                     enum idx = staticIndexOf!(DefaultAttribute!(string, FieldType), typeof(Attributes));
-                    pragma(msg, "Attribute: " ~ typeof(Attributes).stringof);
-                    pragma(msg, "Index: " ~ to!string(idx));
                     static if (idx != -1) {
                         enum attribute = Attributes[idx];
                         if (Field == attribute.condition) {
